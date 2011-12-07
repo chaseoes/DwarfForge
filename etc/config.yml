@@ -1,9 +1,55 @@
-DwarfForge:
-    cooking-time:
-        default: 9.25
-    fuel:
-        require: false
-        allow-crafted-items: true
-    stack-limit:
-        horizontal: 4
-        vertical: 3
+# DwarfForge 2.0 by [Don Redhorse]
+#
+# Configuration File for DwarfForge.
+#
+# For detailed assistance please visit: http://dev.bukkit.org/server-mods/dwarfforge
+
+#------- Default Configuration
+
+# Configuration Version
+configVer: '2.0'
+
+# Error Log Enabled
+# Enable logging to server console
+# Warning and Severe will still be logged.
+errorLogEnabled: true
+
+# Debug Log Enabled
+# Enable more logging.. could be messy!
+DebugLogEnabled: false
+
+# Check for Update
+# Will check if there is a new version of the plugin out.
+checkForUpdate: true
+
+# Auto Update Config
+# This will overwrite any changes outside the configuration parameters!
+autoUpdateConfig: false
+
+# Save Config
+# This will overwrite any changes outside the configuration parameters!
+# Only needed if you use ingame commands to change the configuration.
+saveConfig: false
+
+#-------- Plugin Configuration
+
+# The time to cook/smelt an item in seconds. 9.25 secs is the Minecraft default.
+cooking-time: 9.25
+
+# Set to true to require fuel (coal, wood, etc.) in the input chest.
+# The forge will continue to automate un/loading of goods and fuel.
+require-fuel: false
+
+# When set to false, only the following fuels are burned: coal/charcoal, wood, saplings,
+# sticks, logs, lava buckets. When true, these additional items are counted as fuel:
+# fence, wood stairs, trap doors, chests, note blocks, jukeboxes, and bookshelves.
+allow-crafted-items: false
+
+# How far to the left or right a forge may be to access an input/output chest (through other forges).
+# Set to zero for unlimited. Horizontally "stacked" forges still require lava underneath to function.
+stack-limit-horizontal: 1
+
+# How far above the lava (through other forges) a furnace may be and still be considered a forge.
+# Set to zero for unlimited.
+stack-limit-vertical: 3
+

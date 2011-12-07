@@ -60,7 +60,7 @@ public class Config {
     /**
      * Enable more logging.. could be messy!
      */
-    private boolean debugLogEnabled = true;
+    private boolean debugLogEnabled = false;
     /**
      * Check if there is a new version of the plugin out.
      */
@@ -101,7 +101,7 @@ public class Config {
      * Link to the location of the recent version number, the file should be a text with just the number
      */
     @SuppressWarnings({"FieldCanBeLocal"})
-    private final String versionURL = "https://github.com/dredhorse/DwarfForge/master/etc/dwarfforge.ver";
+    private final String versionURL = "https://raw.github.com/dredhorse/DwarfForge/master/etc/dwarfforge.ver";
     // The org.simiancage.bukkit.DwarfForge.LoggerClass should be renamed to the name of the class you did change the original org.simiancage.bukkit.DwarfForge.LoggerClass too.
     /**
      * Reference of the org.simiancage.bukkit.DwarfForge.LoggerClass, needs to be renamed to correct name.

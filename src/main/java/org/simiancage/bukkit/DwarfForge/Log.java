@@ -110,15 +110,13 @@ public class Log {
 
     /**
      * Method to get the instance of the Log.
-     * Output to console via System.out.print if this method is called
-     * when instance is NULL
      *
      * @return instance of the Log, NOTE: This can be NULL
      */
     public static Log getLogger() {
-        if (instance == null) {
+        /*if (instance == null) {
             System.out.print("Log is not ready yet!");
-        }
+        }*/
         return instance;
     }
 
