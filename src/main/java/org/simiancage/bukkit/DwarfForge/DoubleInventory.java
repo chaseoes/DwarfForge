@@ -20,15 +20,15 @@
     THE SOFTWARE.
 */
 
-package com.splatbang.dwarfforge;
+package org.simiancage.bukkit.DwarfForge;
 
-
-import java.util.Arrays;
-import java.util.HashMap;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
+import java.util.HashMap;
 
 
 public class DoubleInventory implements Inventory {
@@ -44,24 +44,26 @@ public class DoubleInventory implements Inventory {
 
     public ItemStack getItem(int index) {
         int majorSize = major.getSize();
-        if (index < majorSize)
+        if (index < majorSize) {
             return major.getItem(index);
-        else
+        } else {
             return minor.getItem(index - majorSize);
+        }
     }
 
     public void setItem(int index, ItemStack item) {
         int majorSize = major.getSize();
-        if (index < majorSize)
+        if (index < majorSize) {
             major.setItem(index, item);
-        else
+        } else {
             minor.setItem(index - majorSize, item);
+        }
     }
 
     public HashMap<Integer, ItemStack> addItem(ItemStack... items) {
         HashMap<Integer, ItemStack> leftover = major.addItem(items);
         if (leftover != null && !leftover.isEmpty()) {
-            ItemStack[] rest = { }; // not null
+            ItemStack[] rest = {}; // not null
             rest = leftover.values().toArray(rest);
             leftover = minor.addItem(rest);
         }
@@ -71,7 +73,7 @@ public class DoubleInventory implements Inventory {
     public HashMap<Integer, ItemStack> removeItem(ItemStack... items) {
         HashMap<Integer, ItemStack> leftover = major.addItem(items);
         if (leftover != null && !leftover.isEmpty()) {
-            ItemStack[] rest = { }; // not null
+            ItemStack[] rest = {}; // not null
             rest = leftover.values().toArray(rest);
             leftover = minor.removeItem(rest);
         }
@@ -86,8 +88,7 @@ public class DoubleInventory implements Inventory {
         int majorSize = major.getSize();
         if (items.length <= majorSize) {
             major.setContents(items);
-        }
-        else {
+        } else {
             major.setContents(Arrays.copyOfRange(items, 0, majorSize));
             minor.setContents(Arrays.copyOfRange(items, majorSize, items.length - majorSize));
         }
@@ -134,8 +135,9 @@ public class DoubleInventory implements Inventory {
         int index = major.first(materialId);
         if (index < 0) {
             index = minor.first(materialId);
-            if (index >= 0)
+            if (index >= 0) {
                 index += majorSize;
+            }
         }
         return index;
     }
@@ -145,8 +147,9 @@ public class DoubleInventory implements Inventory {
         int index = major.first(material);
         if (index < 0) {
             index = minor.first(material);
-            if (index >= 0)
+            if (index >= 0) {
                 index += majorSize;
+            }
         }
         return index;
     }
@@ -156,8 +159,9 @@ public class DoubleInventory implements Inventory {
         int index = major.first(item);
         if (index < 0) {
             index = minor.first(item);
-            if (index >= 0)
+            if (index >= 0) {
                 index += majorSize;
+            }
         }
         return index;
     }
@@ -167,8 +171,9 @@ public class DoubleInventory implements Inventory {
         int index = major.firstEmpty();
         if (index < 0) {
             index = minor.firstEmpty();
-            if (index >= 0)
+            if (index >= 0) {
                 index += majorSize;
+            }
         }
         return index;
     }
@@ -190,10 +195,11 @@ public class DoubleInventory implements Inventory {
 
     public void clear(int index) {
         int majorSize = major.getSize();
-        if (index < majorSize)
+        if (index < majorSize) {
             major.clear(index);
-        else
+        } else {
             minor.clear(index - majorSize);
+        }
     }
 
     public void clear() {

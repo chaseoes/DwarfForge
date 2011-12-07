@@ -20,17 +20,14 @@
     THE SOFTWARE.
 */
 
-package com.splatbang.dwarfforge;
+package org.simiancage.bukkit.DwarfForge;
 
-
-import java.util.Arrays;
-import java.lang.IllegalArgumentException;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 
 import net.minecraft.server.FurnaceRecipes;
 import net.minecraft.server.ItemStack;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 
 
@@ -38,6 +35,9 @@ class Utils {
 
     static final short SECS = 20;           // 20 server ticks
     static final short MINS = 60 * SECS;
+
+    private Log log = Log.getLogger();
+    private Config config = Config.getInstance();
 
     // Logs are usually considered a typical fuel, but the Dwarfs were not
     // stupid. Cook logs into charcoal, a much more efficient fuel.
@@ -53,7 +53,7 @@ class Utils {
                 return false;
         }
     }
-        
+
     static private boolean isCraftedFuel(Material m) {
         switch (m) {
             case FENCE:
@@ -82,16 +82,20 @@ class Utils {
     }
 
     static boolean canBurn(Material m) {
-        return  isTypicalFuel(m)
-            || (isCraftedFuel(m) && DFConfig.allowCraftedFuel());
+        return isTypicalFuel(m)
+                || (isCraftedFuel(m) && Config.isAllowCraftedFuel());
     }
 
     static BlockFace nextCardinalFace(BlockFace dir) {
         switch (dir) {
-            case NORTH:   return BlockFace.EAST;
-            case EAST:    return BlockFace.SOUTH;
-            case SOUTH:   return BlockFace.WEST;
-            case WEST:    return BlockFace.NORTH;
+            case NORTH:
+                return BlockFace.EAST;
+            case EAST:
+                return BlockFace.SOUTH;
+            case SOUTH:
+                return BlockFace.WEST;
+            case WEST:
+                return BlockFace.NORTH;
             default:
                 throw new IllegalArgumentException(
                         "Only cardinal directions permitted: received " + dir);
@@ -104,8 +108,9 @@ class Utils {
 
     static boolean isBlockOfType(Block block, Material... types) {
         for (Material type : types) {
-            if (block.getType() == type)
+            if (block.getType() == type) {
                 return true;
+            }
         }
         return false;
     }

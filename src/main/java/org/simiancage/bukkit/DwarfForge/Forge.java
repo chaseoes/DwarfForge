@@ -20,25 +20,22 @@
     THE SOFTWARE.
 */
 
-package com.splatbang.dwarfforge;
+package org.simiancage.bukkit.DwarfForge;
 
-
-import java.lang.Runnable;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import net.minecraft.server.BlockFurnace;
-import org.bukkit.craftbukkit.CraftWorld;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Furnace;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.FurnaceAndDispenser;
+
+import java.util.HashMap;
 
 
 class Forge implements Runnable {
@@ -51,12 +48,13 @@ class Forge implements Runnable {
 
     // These durations must all be less than max short.
     // Additionally, TASK_DURATION + AVOID_STAMPEDE < BURN_DURATION.
-    private static final short ZERO_DURATION  =  0;
-    private static final short AVOID_STAMPEDE =  2 * Utils.MINS;
-    private static final short TASK_DURATION  = 20 * Utils.MINS;
-    private static final short BURN_DURATION  = 25 * Utils.MINS;
+    private static final short ZERO_DURATION = 0;
+    private static final short AVOID_STAMPEDE = 2 * Utils.MINS;
+    private static final short TASK_DURATION = 20 * Utils.MINS;
+    private static final short BURN_DURATION = 25 * Utils.MINS;
 
-
+    private Log log = Log.getLogger();
+    private static Config config;
     static HashMap<Location, Forge> active = new HashMap<Location, Forge>();
     private static java.util.Random rnd = new java.util.Random();
 
@@ -72,15 +70,19 @@ class Forge implements Runnable {
 
     public Forge(Block block) {
         this.loc = block.getLocation();
+        config = Config.getInstance();
+        log.debug("Forge toggled at", loc.toString());
     }
 
     public Forge(Location loc) {
+        config = Config.getInstance();
         this.loc = loc;
+        log.debug("Forge toggled at", loc.toString());
     }
 
     @Override
     public boolean equals(Object obj) {
-        return loc.equals( ((Forge) obj).loc );
+        return loc.equals(((Forge) obj).loc);
     }
 
     @Override
@@ -101,24 +103,26 @@ class Forge implements Runnable {
     }
 
     static boolean isValid(Block block) {
-        return isValid(block, DFConfig.maxStackVertical());
+        return isValid(block, config.getMaxStackHorizontal());
     }
 
     // This static version is kept around so that other code may check if a block
     // is potentially a Forge before actually creating a Forge object.
     static boolean isValid(Block block, int stack) {
         // Can't be a Forge if it isn't a furnace.
-        if (!Utils.isBlockOfType(block, Material.FURNACE, Material.BURNING_FURNACE))
+        if (!Utils.isBlockOfType(block, Material.FURNACE, Material.BURNING_FURNACE)) {
             return false;
+        }
 
         // Can't be a Forge beyond the vertical stacking limit.
-        if (stack <= 0)
+        if (stack <= 0) {
             return false;
+        }
 
         // Is lava or another Forge below? Then it is a Forge.
         Block below = block.getRelative(BlockFace.DOWN);
         return Utils.isBlockOfType(below, Material.LAVA, Material.STATIONARY_LAVA)
-            || isValid(below, stack - 1);
+                || isValid(below, stack - 1);
     }
 
     boolean isBurning() {
@@ -163,7 +167,7 @@ class Forge implements Runnable {
 
             // Special case: if charcoal is product and fuel is required,
             // put it back into input chest.
-            if (DFConfig.requireFuel() && item.getType() == Material.COAL) {
+            if (config.isRequireFuel() && item.getType() == Material.COAL) {
                 dest = getInputChest();
             }
 
@@ -200,7 +204,7 @@ class Forge implements Runnable {
             Block input = getInputChest();
             if (input != null) {
 
-                BetterChest chest = new BetterChest( (Chest) input.getState() );
+                BetterChest chest = new BetterChest((Chest) input.getState());
                 Inventory chestInv = chest.getInventory();
 
                 boolean itemFound = false;
@@ -229,14 +233,13 @@ class Forge implements Runnable {
                         blockInv.setItem(RAW_SLOT, single);
 
                         if (items.getAmount() == 1) {
-                          chestInv.clear(chestInv.first(items));
-                        }
-                        else {
-                          items.setAmount(items.getAmount() - 1);
+                            chestInv.clear(chestInv.first(items));
+                        } else {
+                            items.setAmount(items.getAmount() - 1);
                         }
 
                         // Set cook time.
-                        ((Furnace) getBlock().getState()).setCookTime(DFConfig.cookTime());
+                        ((Furnace) getBlock().getState()).setCookTime(config.cookTime());
 
                         itemFound = true;
                         break;
@@ -246,13 +249,11 @@ class Forge implements Runnable {
                 if (!itemFound) {
                     return false;
                 }
-            }
-            else {
+            } else {
                 // no input chest; no input material
                 return false;
             }
-        }
-        else {
+        } else {
             // Something already in the raw slot; is it smeltable?
             return Utils.canCook(raw.getType());
         }
@@ -276,7 +277,7 @@ class Forge implements Runnable {
             Block input = getInputChest();
             if (input != null) {
 
-                BetterChest chest = new BetterChest( (Chest) input.getState() );
+                BetterChest chest = new BetterChest((Chest) input.getState());
                 Inventory chestInv = chest.getInventory();
 
                 boolean itemFound = false;
@@ -294,8 +295,7 @@ class Forge implements Runnable {
 
                         if (items.getAmount() == 1) {
                             chestInv.clear(chestInv.first(items));
-                        }
-                        else {
+                        } else {
                             items.setAmount(items.getAmount() - 1);
                         }
 
@@ -320,7 +320,7 @@ class Forge implements Runnable {
         // inactive forge?
 
         if (isValid()) {
-            if (DFConfig.requireFuel()) {
+            if (config.isRequireFuel()) {
 
                 if (!updateProduct() || !updateRawMaterial() || !updateFuel()) {
                     // Something is preventing further smelting. Unload fuel,
@@ -329,30 +329,30 @@ class Forge implements Runnable {
                     deactivate();
                     unloadFuel();
                 }
+            } else {
+                // No fuel required; only user interaction changes forge state.
+                // No user interaction here; run the processes, but don't change
+                // active state.
+                updateProduct();
+                updateRawMaterial();
+                ignite();
             }
-            else {
-              // No fuel required; only user interaction changes forge state.
-              // No user interaction here; run the processes, but don't change
-              // active state.
-              updateProduct();
-              updateRawMaterial();
-              ignite();
-            }
-        }
-        else {
-          // No longer valid: deactivate.
-          deactivate();
+        } else {
+            // No longer valid: deactivate.
+            deactivate();
 
-          // Douse only if fuel is not required.
-          if (!DFConfig.requireFuel()) {
-            douse();
-          }
+            // Douse only if fuel is not required.
+            if (!config.isRequireFuel()) {
+                douse();
+            }
 
         }
     }
 
     // Called on furnace fuel burn events.
-    void burnUpdate() { update(); }
+    void burnUpdate() {
+        update();
+    }
 
     // Called on furnace material smelt events.
     void smeltUpdate() {
@@ -360,11 +360,13 @@ class Forge implements Runnable {
         // the new cook time.
         update();
         if (isActive()) {
-          ((Furnace) getBlock().getState()).setCookTime(DFConfig.cookTime());
+            ((Furnace) getBlock().getState()).setCookTime(config.cookTime());
         }
     }
 
-    public void run() { update(); }
+    public void run() {
+        update();
+    }
 
     private void activate() {
         // Only activate if not already active.
@@ -407,16 +409,15 @@ class Forge implements Runnable {
     // Manual, user interaction to startup/shutdown a forge.
     void toggle() {
         if (isActive()) {
-            if (DFConfig.requireFuel()) {
+            if (config.isRequireFuel()) {
                 unloadFuel();
                 // TODO Save partial fuel.
             }
             deactivate();
             douse();
-        }
-        else {
+        } else {
             activate();
-            ((Furnace) getBlock().getState()).setCookTime(DFConfig.cookTime());
+            ((Furnace) getBlock().getState()).setCookTime(config.cookTime());
         }
     }
 
@@ -426,28 +427,32 @@ class Forge implements Runnable {
     }
 
     private static Block getForgeChest(Block block, BlockFace dir) {
-        return getForgeChest(block, dir, DFConfig.maxStackHorizontal());
+        return getForgeChest(block, dir, config.getMaxStackHorizontal());
     }
 
     private static Block getForgeChest(Block block, BlockFace dir, int stack) {
         // Can't use the chest beyond horizontal stacking limit.
-        if (stack <= 0)
+        if (stack <= 0) {
             return null;
+        }
 
         // If the adjacent block is a chest, use it.
         Block adjacent = block.getRelative(dir);
-        if (Utils.isBlockOfType(adjacent, Material.CHEST))
+        if (Utils.isBlockOfType(adjacent, Material.CHEST)) {
             return adjacent;
+        }
 
         // If there is a forge below, use its chest.
         Block below = block.getRelative(BlockFace.DOWN);
-        if (Forge.isValid(below))
+        if (Forge.isValid(below)) {
             return getForgeChest(below, dir, stack);    // Don't change horz stack dist going down.
+        }
 
         // If there is a forge adjacent (in provided direction) and it
         // has a chest, use it.
-        if (Forge.isValid(adjacent))
-            return getForgeChest(adjacent, dir, stack-1);
+        if (Forge.isValid(adjacent)) {
+            return getForgeChest(adjacent, dir, stack - 1);
+        }
 
         // No chest.
         return null;
@@ -472,58 +477,58 @@ class Forge implements Runnable {
 
         // Remove fuel from the furnace.
         ItemStack fuel = blockInv.getItem(FUEL_SLOT);
-        if (fuel == null || fuel.getType() == Material.AIR)
+        if (fuel == null || fuel.getType() == Material.AIR) {
             return;     // No fuel? WTF? Whatever...
+        }
 
         blockInv.clear(FUEL_SLOT);
 
         // First, try putting as much fuel back into the input chest.
         Block input = getInputChest();
         if (input != null) {
-            BetterChest chest = new BetterChest( (Chest) input.getState() );
+            BetterChest chest = new BetterChest((Chest) input.getState());
             Inventory chestInv = chest.getInventory();
 
             // Add to chest; remember what remains, if any.
-            HashMap<Integer,ItemStack> remains = chestInv.addItem(fuel);
+            HashMap<Integer, ItemStack> remains = chestInv.addItem(fuel);
             fuel = remains.isEmpty() ? null : remains.get(0);
         }
 
         // Second, drop on ground.
-        if (fuel != null)
+        if (fuel != null) {
             loc.getWorld().dropItemNaturally(loc, fuel);
+        }
     }
 
     // Move the item stack to the input/output chest as provided, either returning
     // what remains or dropping it based on flag. Note: chest might be null.
     ItemStack addTo(ItemStack item, Block chest, boolean dropRemains) {
         if (item == null)   // TODO This should NOT be possible: need to verify.
+        {
             return null;
+        }
 
         if (chest == null) {    // No destination chest.
             if (dropRemains) {
                 loc.getWorld().dropItemNaturally(loc, item);
                 return null;
-            }
-            else {
+            } else {
                 return item;
             }
-        }
-        else {
-            BetterChest bchest = new BetterChest( (Chest) chest.getState() );
+        } else {
+            BetterChest bchest = new BetterChest((Chest) chest.getState());
             Inventory chestInv = bchest.getInventory();
 
             HashMap<Integer, ItemStack> remains = chestInv.addItem(item);
             if (remains.isEmpty()) {
                 // Everything fit!
                 return null;
-            }
-            else {
+            } else {
                 // Destination chest full.
                 if (dropRemains) {
                     loc.getWorld().dropItemNaturally(loc, remains.get(0));
                     return null;
-                }
-                else {
+                } else {
                     return remains.get(0);
                 }
             }

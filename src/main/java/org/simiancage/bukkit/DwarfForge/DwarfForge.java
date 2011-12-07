@@ -20,40 +20,33 @@
     THE SOFTWARE.
 */
 
-package com.splatbang.dwarfforge;
+package org.simiancage.bukkit.DwarfForge;
 
-
-import java.io.EOFException;
-import java.io.File;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.lang.Runnable;
-import java.lang.String;
-import java.util.HashMap;
-import java.util.logging.Logger;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.*;
+import java.util.HashMap;
 
 
 public class DwarfForge extends JavaPlugin {
 
-    static Logger log = Logger.getLogger("Minecraft");
+    private Log log;
+    private Config config;
+    private FileConfiguration configuration;
 
     interface Listener {
         void onEnable(DwarfForge main);
+
         void onDisable();
     }
 
     private Listener[] listeners = {
-        new DFBlockListener(),
-        new DFInventoryListener()
+            new DFBlockListener(),
+            new DFInventoryListener()
     };
 
     static DwarfForge main;
@@ -62,18 +55,17 @@ public class DwarfForge extends JavaPlugin {
     public void onEnable() {
         main = this;
 
-        getConfig().options().copyDefaults(true);
-        saveConfig();
+        log = Log.getInstance(main);
+        config = Config.getInstance();
+        config.setupConfig(configuration, main);
 
-        DFConfig.onEnable(getConfig());
 
         restoreActiveForges(Forge.active);
         for (Listener listener : listeners) {
             listener.onEnable(this);
         }
 
-        PluginDescriptionFile pdf = this.getDescription();
-        logInfo("Version " + pdf.getVersion() + " enabled.");
+        log.enableMsg();
     }
 
     @Override
@@ -83,19 +75,19 @@ public class DwarfForge extends JavaPlugin {
         }
         saveActiveForges(Forge.active);
 
-        DFConfig.onDisable();
+
         main = null;
 
-        logInfo("Disabled.");
+        log.disableMsg();
     }
 
-    void logInfo(String msg) {
+/*    void logInfo(String msg) {
         log.info("[DwarfForge] " + msg);
     }
 
     void logSevere(String msg) {
         log.severe("[DwarfForge] " + msg);
-    }
+    }*/
 
     int queueTask(Runnable task) {
         return getServer().getScheduler().scheduleSyncDelayedTask(this, task);
@@ -136,10 +128,9 @@ public class DwarfForge extends JavaPlugin {
                 count += 1;
             }
             out.close();
-            logInfo("Saved " + count + " active Forges.");
-        }
-        catch (Exception e) {
-            logSevere("Could not save active forges to file: " + e);
+            log.info("Saved " + count + " active Forges.");
+        } catch (Exception e) {
+            log.severe("Could not save active forges to file: " + e);
         }
     }
 
@@ -164,16 +155,14 @@ public class DwarfForge extends JavaPlugin {
                         Location loc = new Location(getServer().getWorld(name), x, y, z);
                         activeForges.put(loc, new Forge(loc));
                         count += 1;
-                    }
-                    catch (EOFException e) {
+                    } catch (EOFException e) {
                         break;
                     }
                 }
                 in.close();
-                logInfo("Restored " + count + " active Forges.");
-            }
-            catch (Exception e) {
-                logSevere("Something went wrong with file while restoring forges: " + e);
+                log.info("Restored " + count + " active Forges.");
+            } catch (Exception e) {
+                log.severe("Something went wrong with file while restoring forges: " + e);
             }
         }
     }

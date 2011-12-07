@@ -20,7 +20,7 @@
     THE SOFTWARE.
 */
 
-package com.splatbang.dwarfforge;
+package org.simiancage.bukkit.DwarfForge;
 
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -52,16 +52,22 @@ class DFConfig {
         cookTime = config.getDouble(KEY_COOK_TIME);
 
         // Some limits...
-        if (maxStackVertical < 0)
-          maxStackVertical = 0;
-        if (maxStackHorizontal < 0)
-          maxStackHorizontal = 0;
+        if (maxStackVertical < 0) {
+            maxStackVertical = 0;
+        }
+        if (maxStackHorizontal < 0) {
+            maxStackHorizontal = 0;
+        }
 
-        if (cookTime < 0)
-          cookTime = 0;
-        if (cookTime > MAX_COOK_TIME)
-          cookTime = MAX_COOK_TIME;
+        if (cookTime < 0) {
+            cookTime = 0;
+        }
+        if (cookTime > MAX_COOK_TIME) {
+            cookTime = MAX_COOK_TIME;
+        }
     }
+}
+/*
 
     static void onDisable() {
     }
@@ -89,3 +95,4 @@ class DFConfig {
     }
 }
 
+*/

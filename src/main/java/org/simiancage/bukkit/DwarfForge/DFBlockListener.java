@@ -20,21 +20,15 @@
     THE SOFTWARE.
 */
 
-package com.splatbang.dwarfforge;
+package org.simiancage.bukkit.DwarfForge;
 
 
-import java.lang.Runnable;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Furnace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.block.BlockListener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 
 
@@ -45,34 +39,37 @@ class DFBlockListener extends BlockListener implements DwarfForge.Listener {
     public void onEnable(DwarfForge main) {
         this.main = main;
 
-        main.registerEvent(Event.Type.BLOCK_PLACE,  this, Event.Priority.Normal);
-        main.registerEvent(Event.Type.BLOCK_BREAK,  this, Event.Priority.Normal);
+        main.registerEvent(Event.Type.BLOCK_PLACE, this, Event.Priority.Normal);
+        main.registerEvent(Event.Type.BLOCK_BREAK, this, Event.Priority.Normal);
         main.registerEvent(Event.Type.BLOCK_DAMAGE, this, Event.Priority.Monitor);
         main.registerEvent(Event.Type.BLOCK_IGNITE, this, Event.Priority.Normal);
     }
 
     @Override
-    public void onDisable() { }
+    public void onDisable() {
+    }
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
         // If the event was already cancelled, we're not going to change that status.
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         Block block = event.getBlockPlaced();
+
         boolean attemptToBuildForge = false;
 
         if (Utils.isBlockOfType(block, Material.FURNACE, Material.BURNING_FURNACE)) {
             attemptToBuildForge = Forge.isValid(block);
-        }
-        else if (Utils.isBlockOfType(block, Material.LAVA, Material.STATIONARY_LAVA)) {
+        } else if (Utils.isBlockOfType(block, Material.LAVA, Material.STATIONARY_LAVA)) {
             attemptToBuildForge = Forge.isValid(block.getRelative(BlockFace.UP));
         }
 
         // If the player was not attempting to build a Dwarf Forge, ignore the event.
-        if (!attemptToBuildForge)
+        if (!attemptToBuildForge) {
             return;
+        }
 
         // Does the player have permission?
         Player player = event.getPlayer();
@@ -86,13 +83,15 @@ class DFBlockListener extends BlockListener implements DwarfForge.Listener {
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
         // If event was already cancelled, we're not going to change that status.
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         // If the player was not attempting to destroy a Dwarf Forge, ignore the event.
         Block block = event.getBlock();
-        if (!Forge.isValid(block))
+        if (!Forge.isValid(block)) {
             return;
+        }
 
         // Does the player have permission?
         Player player = event.getPlayer();
@@ -106,13 +105,15 @@ class DFBlockListener extends BlockListener implements DwarfForge.Listener {
     @Override
     public void onBlockDamage(BlockDamageEvent event) {
         // Monitoring event: do nothing if event was cancelled.
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         // Do nothing if the furnace isn't a Dwarf Forge.
         Block block = event.getBlock();
-        if (!Forge.isValid(block))
+        if (!Forge.isValid(block)) {
             return;
+        }
 
         // Do nothing if the player hasn't permission to use the forge.
         // Note that we do NOT cancel the event; only this plugin does no further work.
@@ -134,12 +135,14 @@ class DFBlockListener extends BlockListener implements DwarfForge.Listener {
     @Override
     public void onBlockIgnite(BlockIgniteEvent event) {
         // If event was already cancelled, we're not going to change that status.
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         // Ignore event if lava was not the cause.
-        if (event.getCause() != IgniteCause.LAVA)
+        if (event.getCause() != IgniteCause.LAVA) {
             return;
+        }
 
         // If there is any Dwarf Forge within 3 radius, cancel the event.
         // Yes, it's possible other exposed lava also nearby caused the

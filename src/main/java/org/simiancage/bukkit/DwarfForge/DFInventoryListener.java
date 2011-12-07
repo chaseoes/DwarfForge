@@ -20,10 +20,9 @@
     THE SOFTWARE.
 */
 
-package com.splatbang.dwarfforge;
+package org.simiancage.bukkit.DwarfForge;
 
 
-import java.lang.Runnable;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
@@ -37,18 +36,21 @@ import org.bukkit.inventory.ItemStack;
 
 class DFInventoryListener extends InventoryListener implements DwarfForge.Listener {
     private DwarfForge main;
+    private Log log = Log.getLogger();
+    private Config config = Config.getInstance();
 
     @Override
     public void onEnable(DwarfForge main) {
         this.main = main;
 
         // Event registration
-        main.registerEvent(Event.Type.FURNACE_BURN,  this, Event.Priority.Monitor);
+        main.registerEvent(Event.Type.FURNACE_BURN, this, Event.Priority.Monitor);
         main.registerEvent(Event.Type.FURNACE_SMELT, this, Event.Priority.Monitor);
     }
 
     @Override
-    public void onDisable() { }
+    public void onDisable() {
+    }
 
     @Override
     public void onFurnaceBurn(FurnaceBurnEvent event) {
@@ -57,8 +59,9 @@ class DFInventoryListener extends InventoryListener implements DwarfForge.Listen
         // if it is now empty.
 
         // Monitoring event: do nothing if event was cancelled.
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         final Block block = event.getFurnace();
         final Forge forge = Forge.find(block);
@@ -93,8 +96,7 @@ class DFInventoryListener extends InventoryListener implements DwarfForge.Listen
                         if (curr == null || curr.getType() == Material.AIR) {   // Is fuel slot empty?
                             // Yes, place it in the fuel slot.
                             inv.setItem(Forge.FUEL_SLOT, item);
-                        }
-                        else {
+                        } else {
                             // Not empty; no place left to put the bucket. Drop it to the ground.
                             block.getWorld().dropItemNaturally(block.getLocation(), item);
                         }
@@ -104,13 +106,16 @@ class DFInventoryListener extends InventoryListener implements DwarfForge.Listen
         }
 
         // Do nothing else if the furnace isn't a Dwarf Forge.
-        if (forge == null)
+        if (forge == null) {
             return;
+        }
 
         // Reload fuel if required.
-        if (DFConfig.requireFuel()) {
+        if (config.isRequireFuel()) {
             main.queueTask(new Runnable() {
-                public void run() { forge.burnUpdate(); }
+                public void run() {
+                    forge.burnUpdate();
+                }
             });
         }
     }
@@ -118,18 +123,22 @@ class DFInventoryListener extends InventoryListener implements DwarfForge.Listen
     @Override
     public void onFurnaceSmelt(FurnaceSmeltEvent event) {
         // Monitoring event: do nothing if event was cancelled.
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         // Do nothing if the furnace isn't a Dwarf Forge.
         Block block = event.getFurnace();
-        if (!Forge.isValid(block))
+        if (!Forge.isValid(block)) {
             return;
+        }
 
         // Queue up task to unload and reload the furnace.
         final Forge forge = Forge.find(block);
         main.queueTask(new Runnable() {
-            public void run() { forge.smeltUpdate(); }
+            public void run() {
+                forge.smeltUpdate();
+            }
         });
     }
 }

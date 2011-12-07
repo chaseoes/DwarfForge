@@ -20,7 +20,7 @@
     THE SOFTWARE.
 */
 
-package com.splatbang.dwarfforge;
+package org.simiancage.bukkit.DwarfForge;
 
 
 import org.bukkit.Chunk;
@@ -68,7 +68,7 @@ public class BetterChest implements Chest {
     public World getWorld() {
         return ref.getWorld();
     }
-    
+
     public int getX() {
         return ref.getX();
     }
@@ -107,8 +107,7 @@ public class BetterChest implements Chest {
         Chest other = findAttachedChest();
         if (other == null) {
             return ref.getInventory();
-        }
-        else {
+        } else {
             return new DoubleInventory(ref.getInventory(), other.getInventory());
         }
     }
@@ -116,14 +115,14 @@ public class BetterChest implements Chest {
 
     // BetterChest internals
     private static final BlockFace[] FACES = {
-        BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
+            BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
 
     private Chest ref;
 
     public BetterChest(Chest ref) {
         this.ref = ref;
     }
-    
+
     private Chest findAttachedChest() {
         // Find the first adjacent chest. Note: hacking of various sorts/degrees and/or
         // other plugins might allow multiple chests to be adjacent. Deal with that later
