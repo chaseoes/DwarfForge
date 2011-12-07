@@ -1,6 +1,6 @@
 package org.simiancage.bukkit.DwarfForge; /**
  *
- * PluginName: ${plugin}
+ * PluginName: DwarfForge
  * Class: Log
  * User: DonRedhorse
  * Date: 07.12.11
