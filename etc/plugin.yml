@@ -1,6 +1,6 @@
 name: DwarfForge
 main: org.simiancage.bukkit.DwarfForge.DwarfForge
-version: 2.0
+version: 2.1
 author: Don Redhorse
 
 commands:

@@ -103,7 +103,7 @@ class Forge implements Runnable {
     }
 
     static boolean isValid(Block block) {
-        return isValid(block, config.getMaxStackHorizontal());
+        return isValid(block, config.getMaxStackVertical());
     }
 
     // This static version is kept around so that other code may check if a block
