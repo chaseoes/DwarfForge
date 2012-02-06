@@ -33,87 +33,88 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 
 class Utils {
 
-    static final short SECS = 20;           // 20 server ticks
-    static final short MINS = 60 * SECS;
+	static final short SECS = 20;           // 20 server ticks
+	static final short MINS = 60 * SECS;
 
-    private Log log = Log.getLogger();
-    private Config config = Config.getInstance();
+	private Log log = Log.getLogger();
+	private Config config = Config.getInstance();
 
-    // Logs are usually considered a typical fuel, but the Dwarfs were not
-    // stupid. Cook logs into charcoal, a much more efficient fuel.
-    static private boolean isTypicalFuel(Material m) {
-        switch (m) {
-            case COAL:
-            case WOOD:
-            case SAPLING:
-            case STICK:
-            case LAVA_BUCKET:
-                return true;
-            default:
-                return false;
-        }
-    }
+	// Logs are usually considered a typical fuel, but the Dwarfs were not
+	// stupid. Cook logs into charcoal, a much more efficient fuel.
+	static private boolean isTypicalFuel(Material m) {
+		switch (m) {
+			case COAL:
+			case WOOD:
+			case SAPLING:
+			case STICK:
+			case LAVA_BUCKET:
+				return true;
+			default:
+				return false;
+		}
+	}
 
-    static private boolean isCraftedFuel(Material m) {
-        switch (m) {
-            case FENCE:
-            case WOOD_STAIRS:
-            case TRAP_DOOR:
-            case CHEST:
-            case LOCKED_CHEST:
-            case NOTE_BLOCK:
-            case JUKEBOX:
-            case BOOKSHELF:
-                return true;
-            default:
-                return false;
-        }
-    }
+	static private boolean isCraftedFuel(Material m) {
+		switch (m) {
+			case FENCE:
+			case WOOD_STAIRS:
+			case TRAP_DOOR:
+			case CHEST:
+			case LOCKED_CHEST:
+			case NOTE_BLOCK:
+			case JUKEBOX:
+			case BOOKSHELF:
+			case BLAZE_ROD:
+				return true;
+			default:
+				return false;
+		}
+	}
 
-    static Material resultOfCooking(Material mat) {
-        ItemStack item = FurnaceRecipes.getInstance().a(mat.getId());
-        return (item != null)
-                ? new CraftItemStack(item).getType()
-                : null;
-    }
+	static Material resultOfCooking(Material mat) {
+		ItemStack item = FurnaceRecipes.getInstance().a(mat.getId());
+		return (item != null)
+				? new CraftItemStack(item).getType()
+				: null;
+	}
 
-    static boolean canCook(Material m) {
-        return resultOfCooking(m) != null;
-    }
+	static boolean canCook(Material m) {
+		return resultOfCooking(m) != null;
+	}
 
-    static boolean canBurn(Material m) {
-        return isTypicalFuel(m)
-                || (isCraftedFuel(m) && Config.isAllowCraftedFuel());
-    }
+	static boolean canBurn(Material m) {
+		return isTypicalFuel(m)
+				|| (isCraftedFuel(m) && Config.isAllowCraftedFuel());
+	}
 
-    static BlockFace nextCardinalFace(BlockFace dir) {
-        switch (dir) {
-            case NORTH:
-                return BlockFace.EAST;
-            case EAST:
-                return BlockFace.SOUTH;
-            case SOUTH:
-                return BlockFace.WEST;
-            case WEST:
-                return BlockFace.NORTH;
-            default:
-                throw new IllegalArgumentException(
-                        "Only cardinal directions permitted: received " + dir);
-        }
-    }
+	static BlockFace nextCardinalFace(BlockFace dir) {
+		switch (dir) {
+			case NORTH:
+				return BlockFace.EAST;
+			case EAST:
+				return BlockFace.SOUTH;
+			case SOUTH:
+				return BlockFace.WEST;
+			case WEST:
+				return BlockFace.NORTH;
+			default:
+				throw new IllegalArgumentException(
+						"Only cardinal directions permitted: received " + dir);
+		}
+	}
 
-    static BlockFace prevCardinalFace(BlockFace dir) {
-        return nextCardinalFace(dir).getOppositeFace();
-    }
+	static BlockFace prevCardinalFace(BlockFace dir) {
+		return nextCardinalFace(dir).getOppositeFace();
+	}
 
-    static boolean isBlockOfType(Block block, Material... types) {
-        for (Material type : types) {
-            if (block.getType() == type) {
-                return true;
-            }
-        }
-        return false;
-    }
+	static boolean isBlockOfType(Block block, Material... types) {
+		for (Material type : types) {
+			if (block.getType() == type) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }
 
