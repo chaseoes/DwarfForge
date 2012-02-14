@@ -48,6 +48,7 @@ class Utils {
 			case SAPLING:
 			case STICK:
 			case LAVA_BUCKET:
+			case BLAZE_ROD:
 				return true;
 			default:
 				return false;
@@ -64,7 +65,6 @@ class Utils {
 			case NOTE_BLOCK:
 			case JUKEBOX:
 			case BOOKSHELF:
-			case BLAZE_ROD:
 				return true;
 			default:
 				return false;

@@ -114,7 +114,7 @@ public class Config {
 	/**
 	 * This is the internal config version
 	 */
-	private final String configCurrent = "2.1";
+	private final String configCurrent = "2.4";
 	/**
 	 * This is the DEFAULT for the config file version, should be the same as configCurrent. Will afterwards be changed
 	 */
@@ -248,7 +248,7 @@ afterwards parsable again from the configuration class of bukkit
 		stream.println();
 		stream.println("# When set to false, only the following fuels are burned: coal/charcoal, wood, saplings,");
 		stream.println("# sticks, logs, lava buckets. When true, these additional items are counted as fuel:");
-		stream.println("# fence, wood stairs, trap doors, chests, note blocks, jukeboxes, bookshelves and blazerods.");
+		stream.println("# fence, wood stairs, trap doors, chests, note blocks, jukeboxes and bookshelves.");
 		stream.println(KEY_ALLOW_CRAFTED_FUEL + ": " + allowCraftedFuel);
 		stream.println();
 		stream.println("# How far to the left or right a forge may be to access an input/output chest (through other forges).");
