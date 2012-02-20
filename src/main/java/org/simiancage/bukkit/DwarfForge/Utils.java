@@ -72,6 +72,7 @@ class Utils {
 	}
 
 	static Material resultOfCooking(Material mat) {
+		// ToDo checkhere, again some nms code
 		ItemStack item = FurnaceRecipes.getInstance().a(mat.getId());
 		return (item != null)
 				? new CraftItemStack(item).getType()

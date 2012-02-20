@@ -26,120 +26,119 @@ package org.simiancage.bukkit.DwarfForge;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
-import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.event.inventory.InventoryListener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 
-class DFInventoryListener extends InventoryListener implements DwarfForge.Listener {
-    private DwarfForge main;
-    private Log log = Log.getLogger();
-    private Config config = Config.getInstance();
+class DFInventoryListener implements DwarfForge.Listener, Listener {
+	private DwarfForge main;
+	private Log log = Log.getLogger();
+	private Config config = Config.getInstance();
 
-    @Override
-    public void onEnable(DwarfForge main) {
-        this.main = main;
+	@Override
+	public void onEnable(DwarfForge main) {
+		this.main = main;
+		main.getServer().getPluginManager().registerEvents(this, main);
+		// Event registration
+	}
 
-        // Event registration
-        main.registerEvent(Event.Type.FURNACE_BURN, this, Event.Priority.Monitor);
-        main.registerEvent(Event.Type.FURNACE_SMELT, this, Event.Priority.Monitor);
-    }
+	@Override
+	public void onDisable() {
+	}
 
-    @Override
-    public void onDisable() {
-    }
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onFurnaceBurn(FurnaceBurnEvent event) {
+		// NOTE: This identifies the START of a fuel burning event, not its
+		// completion. Still, it's a good opportunity to reload the fuel slot
+		// if it is now empty.
 
-    @Override
-    public void onFurnaceBurn(FurnaceBurnEvent event) {
-        // NOTE: This identifies the START of a fuel burning event, not its
-        // completion. Still, it's a good opportunity to reload the fuel slot
-        // if it is now empty.
+		// Monitoring event: do nothing if event was cancelled.
+		if (event.isCancelled()) {
+			return;
+		}
 
-        // Monitoring event: do nothing if event was cancelled.
-        if (event.isCancelled()) {
-            return;
-        }
+		final Block block = event.getFurnace();
+		final Forge forge = Forge.find(block);
 
-        final Block block = event.getFurnace();
-        final Forge forge = Forge.find(block);
+		// If it was a lava bucket that was used, preserve an empty bucket
+		// whether it was a Dwarf Forge or not.
+		if (event.getFuel().getType() == Material.LAVA_BUCKET) {
+			final ItemStack bucket = new ItemStack(Material.BUCKET, 1);
 
-        // If it was a lava bucket that was used, preserve an empty bucket
-        // whether it was a Dwarf Forge or not.
-        if (event.getFuel().getType() == Material.LAVA_BUCKET) {
-            final ItemStack bucket = new ItemStack(Material.BUCKET, 1);
+			main.queueTask(new Runnable() {
+				public void run() {
+					ItemStack item = bucket;
 
-            main.queueTask(new Runnable() {
-                public void run() {
-                    ItemStack item = bucket;
+					if (forge != null) {    // It is a Dwarf Forge.
+						Block inputChest = forge.getInputChest();
+						Block outputChest = forge.getOutputChest();
 
-                    if (forge != null) {    // It is a Dwarf Forge.
-                        Block inputChest = forge.getInputChest();
-                        Block outputChest = forge.getOutputChest();
+						// First try putting the bucket in the output chest.
+						if (item != null && outputChest != null) {
+							item = forge.addTo(item, outputChest, false);
+						}
 
-                        // First try putting the bucket in the output chest.
-                        if (item != null && outputChest != null) {
-                            item = forge.addTo(item, outputChest, false);
-                        }
+						// Next try putting the bucket in the input chest.
+						if (item != null && inputChest != null) {
+							item = forge.addTo(item, inputChest, false);
+						}
+					}
 
-                        // Next try putting the bucket in the input chest.
-                        if (item != null && inputChest != null) {
-                            item = forge.addTo(item, inputChest, false);
-                        }
-                    }
+					if (item != null) {
+						Inventory inv = ((Furnace) block.getState()).getInventory();
+						ItemStack curr = inv.getItem(Forge.FUEL_SLOT);
+						if (curr == null || curr.getType() == Material.AIR) {   // Is fuel slot empty?
+							// Yes, place it in the fuel slot.
+							inv.setItem(Forge.FUEL_SLOT, item);
+						} else {
+							// Not empty; no place left to put the bucket. Drop it to the ground.
+							block.getWorld().dropItemNaturally(block.getLocation(), item);
+						}
+					}
+				}
+			});
+		}
 
-                    if (item != null) {
-                        Inventory inv = ((Furnace) block.getState()).getInventory();
-                        ItemStack curr = inv.getItem(Forge.FUEL_SLOT);
-                        if (curr == null || curr.getType() == Material.AIR) {   // Is fuel slot empty?
-                            // Yes, place it in the fuel slot.
-                            inv.setItem(Forge.FUEL_SLOT, item);
-                        } else {
-                            // Not empty; no place left to put the bucket. Drop it to the ground.
-                            block.getWorld().dropItemNaturally(block.getLocation(), item);
-                        }
-                    }
-                }
-            });
-        }
+		// Do nothing else if the furnace isn't a Dwarf Forge.
+		if (forge == null) {
+			return;
+		}
 
-        // Do nothing else if the furnace isn't a Dwarf Forge.
-        if (forge == null) {
-            return;
-        }
+		// Reload fuel if required.
+		if (config.isRequireFuel()) {
+			main.queueTask(new Runnable() {
+				public void run() {
+					forge.burnUpdate();
+				}
+			});
+		}
+	}
 
-        // Reload fuel if required.
-        if (config.isRequireFuel()) {
-            main.queueTask(new Runnable() {
-                public void run() {
-                    forge.burnUpdate();
-                }
-            });
-        }
-    }
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onFurnaceSmelt(FurnaceSmeltEvent event) {
+		// Monitoring event: do nothing if event was cancelled.
+		if (event.isCancelled()) {
+			return;
+		}
 
-    @Override
-    public void onFurnaceSmelt(FurnaceSmeltEvent event) {
-        // Monitoring event: do nothing if event was cancelled.
-        if (event.isCancelled()) {
-            return;
-        }
+		// Do nothing if the furnace isn't a Dwarf Forge.
+		Block block = event.getFurnace();
+		if (!Forge.isValid(block)) {
+			return;
+		}
 
-        // Do nothing if the furnace isn't a Dwarf Forge.
-        Block block = event.getFurnace();
-        if (!Forge.isValid(block)) {
-            return;
-        }
-
-        // Queue up task to unload and reload the furnace.
-        final Forge forge = Forge.find(block);
-        main.queueTask(new Runnable() {
-            public void run() {
-                forge.smeltUpdate();
-            }
-        });
-    }
+		// Queue up task to unload and reload the furnace.
+		final Forge forge = Forge.find(block);
+		main.queueTask(new Runnable() {
+			public void run() {
+				forge.smeltUpdate();
+			}
+		});
+	}
 }
 

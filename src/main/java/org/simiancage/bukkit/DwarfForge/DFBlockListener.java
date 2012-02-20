@@ -27,139 +27,140 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.block.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 
-class DFBlockListener extends BlockListener implements DwarfForge.Listener {
-    private DwarfForge main;
+class DFBlockListener implements DwarfForge.Listener, Listener {
+	private DwarfForge main;
 
-    @Override
-    public void onEnable(DwarfForge main) {
-        this.main = main;
+	@Override
+	public void onEnable(DwarfForge main) {
+		this.main = main;
+		main.getServer().getPluginManager().registerEvents(this, main);
+	}
 
-        main.registerEvent(Event.Type.BLOCK_PLACE, this, Event.Priority.Normal);
-        main.registerEvent(Event.Type.BLOCK_BREAK, this, Event.Priority.Normal);
-        main.registerEvent(Event.Type.BLOCK_DAMAGE, this, Event.Priority.Monitor);
-        main.registerEvent(Event.Type.BLOCK_IGNITE, this, Event.Priority.Normal);
-    }
+	@Override
+	public void onDisable() {
+	}
 
-    @Override
-    public void onDisable() {
-    }
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		// If the event was already cancelled, we're not going to change that status.
+		if (event.isCancelled()) {
+			return;
+		}
 
-    @Override
-    public void onBlockPlace(BlockPlaceEvent event) {
-        // If the event was already cancelled, we're not going to change that status.
-        if (event.isCancelled()) {
-            return;
-        }
+		Block block = event.getBlockPlaced();
 
-        Block block = event.getBlockPlaced();
+		boolean attemptToBuildForge = false;
 
-        boolean attemptToBuildForge = false;
+		if (Utils.isBlockOfType(block, Material.FURNACE, Material.BURNING_FURNACE)) {
+			attemptToBuildForge = Forge.isValid(block);
+		} else if (Utils.isBlockOfType(block, Material.LAVA, Material.STATIONARY_LAVA)) {
+			attemptToBuildForge = Forge.isValid(block.getRelative(BlockFace.UP));
+		}
 
-        if (Utils.isBlockOfType(block, Material.FURNACE, Material.BURNING_FURNACE)) {
-            attemptToBuildForge = Forge.isValid(block);
-        } else if (Utils.isBlockOfType(block, Material.LAVA, Material.STATIONARY_LAVA)) {
-            attemptToBuildForge = Forge.isValid(block.getRelative(BlockFace.UP));
-        }
+		// If the player was not attempting to build a Dwarf Forge, ignore the event.
+		if (!attemptToBuildForge) {
+			return;
+		}
 
-        // If the player was not attempting to build a Dwarf Forge, ignore the event.
-        if (!attemptToBuildForge) {
-            return;
-        }
+		// Does the player have permission?
+		Player player = event.getPlayer();
+		if (!player.hasPermission("dwarfforge.create")) {
+			// No: cancel the event.
+			event.setCancelled(true);
+			player.sendMessage("Ye have not the strength of the Dwarfs to create such a forge.");
+		}
+	}
 
-        // Does the player have permission?
-        Player player = event.getPlayer();
-        if (!player.hasPermission("dwarfforge.create")) {
-            // No: cancel the event.
-            event.setCancelled(true);
-            player.sendMessage("Ye have not the strength of the Dwarfs to create such a forge.");
-        }
-    }
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		// If event was already cancelled, we're not going to change that status.
+		if (event.isCancelled()) {
+			return;
+		}
 
-    @Override
-    public void onBlockBreak(BlockBreakEvent event) {
-        // If event was already cancelled, we're not going to change that status.
-        if (event.isCancelled()) {
-            return;
-        }
+		// If the player was not attempting to destroy a Dwarf Forge, ignore the event.
+		Block block = event.getBlock();
+		if (!Forge.isValid(block)) {
+			return;
+		}
 
-        // If the player was not attempting to destroy a Dwarf Forge, ignore the event.
-        Block block = event.getBlock();
-        if (!Forge.isValid(block)) {
-            return;
-        }
+		// Does the player have permission?
+		Player player = event.getPlayer();
+		if (!player.hasPermission("dwarfforge.destroy")) {
+			// NO: cancel the event.
+			event.setCancelled(true);
+			player.sendMessage("Ye have not the might of the Dwarfs to destroy such a forge.");
+		}
+	}
 
-        // Does the player have permission?
-        Player player = event.getPlayer();
-        if (!player.hasPermission("dwarfforge.destroy")) {
-            // NO: cancel the event.
-            event.setCancelled(true);
-            player.sendMessage("Ye have not the might of the Dwarfs to destroy such a forge.");
-        }
-    }
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onBlockDamage(BlockDamageEvent event) {
+		// Monitoring event: do nothing if event was cancelled.
+		if (event.isCancelled()) {
+			return;
+		}
 
-    @Override
-    public void onBlockDamage(BlockDamageEvent event) {
-        // Monitoring event: do nothing if event was cancelled.
-        if (event.isCancelled()) {
-            return;
-        }
+		// Do nothing if the furnace isn't a Dwarf Forge.
+		Block block = event.getBlock();
+		if (!Forge.isValid(block)) {
+			return;
+		}
 
-        // Do nothing if the furnace isn't a Dwarf Forge.
-        Block block = event.getBlock();
-        if (!Forge.isValid(block)) {
-            return;
-        }
+		// Do nothing if the player hasn't permission to use the forge.
+		// Note that we do NOT cancel the event; only this plugin does no further work.
+		Player player = event.getPlayer();
+		if (!player.hasPermission("dwarfforge.use")) {
+			player.sendMessage("Ye have not the will of the Dwarfs to use such a forge.");
+			return;
+		}
 
-        // Do nothing if the player hasn't permission to use the forge.
-        // Note that we do NOT cancel the event; only this plugin does no further work.
-        Player player = event.getPlayer();
-        if (!player.hasPermission("dwarfforge.use")) {
-            player.sendMessage("Ye have not the will of the Dwarfs to use such a forge.");
-            return;
-        }
+		// Queue up task to toggle the forge.
+		final Forge forge = Forge.find(block);
+		main.queueTask(new Runnable() {
+			public void run() {
+				forge.toggle();
+			}
+		});
+	}
 
-        // Queue up task to toggle the forge.
-        final Forge forge = Forge.find(block);
-        main.queueTask(new Runnable() {
-            public void run() {
-                forge.toggle();
-            }
-        });
-    }
+	@EventHandler
+	public void onBlockIgnite(BlockIgniteEvent event) {
+		// If event was already cancelled, we're not going to change that status.
+		if (event.isCancelled()) {
+			return;
+		}
 
-    @Override
-    public void onBlockIgnite(BlockIgniteEvent event) {
-        // If event was already cancelled, we're not going to change that status.
-        if (event.isCancelled()) {
-            return;
-        }
+		// Ignore event if lava was not the cause.
+		if (event.getCause() != IgniteCause.LAVA) {
+			return;
+		}
 
-        // Ignore event if lava was not the cause.
-        if (event.getCause() != IgniteCause.LAVA) {
-            return;
-        }
-
-        // If there is any Dwarf Forge within 3 radius, cancel the event.
-        // Yes, it's possible other exposed lava also nearby caused the
-        // event, but let's assume the Dwarfs are protecting the area around
-        // the Dwarf forge sufficiently.
-        Block block = event.getBlock();
-        for (int dx = -3; dx <= 3; ++dx) {
-            for (int dy = -3; dy <= 3; ++dy) {
-                for (int dz = -3; dz <= 3; ++dz) {
-                    Block check = block.getRelative(dx, dy, dz);
-                    if (Forge.isValid(check)) {
-                        // Protect the block; cancel the ignite event.
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
-            }
-        }
-    }
+		// If there is any Dwarf Forge within 3 radius, cancel the event.
+		// Yes, it's possible other exposed lava also nearby caused the
+		// event, but let's assume the Dwarfs are protecting the area around
+		// the Dwarf forge sufficiently.
+		Block block = event.getBlock();
+		for (int dx = -3; dx <= 3; ++dx) {
+			for (int dy = -3; dy <= 3; ++dy) {
+				for (int dz = -3; dz <= 3; ++dz) {
+					Block check = block.getRelative(dx, dy, dz);
+					if (Forge.isValid(check)) {
+						// Protect the block; cancel the ignite event.
+						event.setCancelled(true);
+						return;
+					}
+				}
+			}
+		}
+	}
 }
