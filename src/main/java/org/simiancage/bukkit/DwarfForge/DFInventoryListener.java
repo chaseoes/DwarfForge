@@ -62,7 +62,7 @@ class DFInventoryListener implements DwarfForge.Listener, Listener {
 			return;
 		}
 
-		final Block block = event.getFurnace();
+		final Block block = event.getBlock();
 		final Forge forge = Forge.find(block);
 
 		// If it was a lava bucket that was used, preserve an empty bucket
@@ -127,7 +127,7 @@ class DFInventoryListener implements DwarfForge.Listener, Listener {
 		}
 
 		// Do nothing if the furnace isn't a Dwarf Forge.
-		Block block = event.getFurnace();
+		Block block = event.getBlock();
 		if (!Forge.isValid(block)) {
 			return;
 		}
