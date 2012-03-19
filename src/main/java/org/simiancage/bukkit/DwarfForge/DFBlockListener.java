@@ -28,7 +28,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -103,7 +102,7 @@ class DFBlockListener implements DwarfForge.Listener, Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler
 	public void onBlockDamage(BlockDamageEvent event) {
 		// Monitoring event: do nothing if event was cancelled.
 		if (event.isCancelled()) {
