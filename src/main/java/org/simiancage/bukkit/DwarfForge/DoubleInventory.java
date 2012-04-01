@@ -40,6 +40,16 @@ public class DoubleInventory implements Inventory {
 		return major.getSize() + minor.getSize();
 	}
 
+	@Override
+	public int getMaxStackSize() {
+		return 0;  //To change body of implemented methods use File | Settings | File Templates.
+	}
+
+	@Override
+	public void setMaxStackSize(int i) {
+		//To change body of implemented methods use File | Settings | File Templates.
+	}
+
 	public String getName() {
 		return major.getName() + ":" + minor.getName();
 	}
@@ -235,6 +245,11 @@ public class DoubleInventory implements Inventory {
 	@Override
 	public ListIterator<ItemStack> iterator() {
 		return null;
+	}
+
+	@Override
+	public ListIterator<ItemStack> iterator(int i) {
+		return null;  //To change body of implemented methods use File | Settings | File Templates.
 	}
 
 

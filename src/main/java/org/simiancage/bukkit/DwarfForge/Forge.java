@@ -71,13 +71,13 @@ class Forge implements Runnable {
 	public Forge(Block block) {
 		this.loc = block.getLocation();
 		config = Config.getInstance();
-		log.debug("Forge toggled at", loc.toString());
+		log.debug("Forge enabled at", loc.toString());
 	}
 
 	public Forge(Location loc) {
 		config = Config.getInstance();
 		this.loc = loc;
-		log.debug("Forge toggled at", loc.toString());
+		log.debug("Forge enabled at", loc.toString());
 	}
 
 	@Override
@@ -113,7 +113,7 @@ class Forge implements Runnable {
 		if (!Utils.isBlockOfType(block, Material.FURNACE, Material.BURNING_FURNACE)) {
 			return false;
 		}
-
+		Log.getLogger().debug("Stack", stack);
 		// Can't be a Forge beyond the vertical stacking limit.
 		if (stack <= 0) {
 			return false;
@@ -121,6 +121,10 @@ class Forge implements Runnable {
 
 		// Is lava or another Forge below? Then it is a Forge.
 		Block below = block.getRelative(BlockFace.DOWN);
+
+		if (Config.isAllowLavaExploit()) {
+			return Utils.isBlockOfType(below, Material.STATIONARY_LAVA, Material.LAVA) || isValid(below, stack - 1);
+		}
 		return Utils.isBlockOfType(below, Material.STATIONARY_LAVA)
 				|| isValid(below, stack - 1);
 	}

@@ -64,6 +64,14 @@ public class DwarfForge extends JavaPlugin {
 			listener.onEnable(this);
 		}
 
+		try {
+			Metrics metrics = new Metrics(main);
+			metrics.start();
+		} catch (IOException e) {
+			log.info("Unable to submit metrics");
+		}
+
+
 		log.enableMsg();
 	}
 

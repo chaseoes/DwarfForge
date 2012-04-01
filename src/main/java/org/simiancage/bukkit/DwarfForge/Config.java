@@ -114,7 +114,7 @@ public class Config {
 	/**
 	 * This is the internal config version
 	 */
-	private final String configCurrent = "2.4";
+	private final String configCurrent = "2.5";
 	/**
 	 * This is the DEFAULT for the config file version, should be the same as configCurrent. Will afterwards be changed
 	 */
@@ -142,6 +142,9 @@ public class Config {
 	private final static String KEY_MAX_STACK_VERTICAL = "stack-limit-vertical";
 	private static int maxStackVertical;
 
+	private final static String KEY_ALLOW_LAVA_EXPLOIT = "allow-lava-exploit";
+	private static boolean allowLavaExploit;
+
 // *******************************************************************************************************************
 
 
@@ -163,6 +166,7 @@ afterwards parsable again from the configuration class of bukkit
 		allowCraftedFuel = false;
 		maxStackHorizontal = 1;
 		maxStackVertical = 3;
+		allowLavaExploit = false;
 
 	}
 
@@ -179,6 +183,7 @@ afterwards parsable again from the configuration class of bukkit
 		config.addDefault(KEY_ALLOW_CRAFTED_FUEL, allowCraftedFuel);
 		config.addDefault(KEY_MAX_STACK_HORIZONTAL, maxStackHorizontal);
 		config.addDefault(KEY_MAX_STACK_VERTICAL, maxStackVertical);
+		config.addDefault(KEY_ALLOW_LAVA_EXPLOIT, allowLavaExploit);
 	}
 
 
@@ -195,12 +200,14 @@ afterwards parsable again from the configuration class of bukkit
 		allowCraftedFuel = config.getBoolean(KEY_ALLOW_CRAFTED_FUEL);
 		maxStackHorizontal = config.getInt(KEY_MAX_STACK_HORIZONTAL);
 		maxStackVertical = config.getInt(KEY_MAX_STACK_VERTICAL);
+		allowLavaExploit = config.getBoolean(KEY_ALLOW_LAVA_EXPLOIT);
 
 		log.debug(KEY_COOK_TIME, cookTime);
 		log.debug(KEY_REQUIRE_FUEL, requireFuel);
 		log.debug(KEY_ALLOW_CRAFTED_FUEL, allowCraftedFuel);
 		log.debug(KEY_MAX_STACK_HORIZONTAL, maxStackHorizontal);
 		log.debug(KEY_MAX_STACK_VERTICAL, maxStackVertical);
+		log.debug(KEY_ALLOW_LAVA_EXPLOIT, allowLavaExploit);
 
 		// Some limits...
 		if (maxStackVertical < 0) {
@@ -252,12 +259,17 @@ afterwards parsable again from the configuration class of bukkit
 		stream.println(KEY_ALLOW_CRAFTED_FUEL + ": " + allowCraftedFuel);
 		stream.println();
 		stream.println("# How far to the left or right a forge may be to access an input/output chest (through other forges).");
-		stream.println("# Set to zero for unlimited. Horizontally \"stacked\" forges still require lava underneath to function.");
+		stream.println("# Horizontally \"stacked\" forges still require lava underneath to function.");
 		stream.println(KEY_MAX_STACK_HORIZONTAL + ": " + maxStackHorizontal);
 		stream.println();
 		stream.println("# How far above the lava (through other forges) a furnace may be and still be considered a forge.");
-		stream.println("# Set to zero for unlimited.");
 		stream.println(KEY_MAX_STACK_VERTICAL + ": " + maxStackVertical);
+		stream.println();
+		stream.println("# Allow for flowing lava to be used under forge. This will fix weird behaviour of forges getting");
+		stream.println("# stuck, not toggling correctly and some other stuff.");
+		stream.println();
+		stream.println("# Note: This can be exploited by users not having the right to build forges.");
+		stream.println(KEY_ALLOW_LAVA_EXPLOIT + ": " + allowLavaExploit);
 
 	}
 
@@ -268,6 +280,11 @@ afterwards parsable again from the configuration class of bukkit
 
 
 // The plugin specific getters start here!
+
+
+	public static boolean isAllowLavaExploit() {
+		return allowLavaExploit;
+	}
 
 	public static double getCookTime() {
 		return cookTime;

@@ -109,6 +109,7 @@ class Utils {
 	}
 
 	static boolean isBlockOfType(Block block, Material... types) {
+		Log.getLogger().debug("BockType", block.getType());
 		for (Material type : types) {
 			if (block.getType() == type) {
 				return true;

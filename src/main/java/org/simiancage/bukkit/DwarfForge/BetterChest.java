@@ -172,5 +172,10 @@ public class BetterChest implements Chest {
 	public void removeMetadata(String s, Plugin plugin) {
 		ref.removeMetadata(s, plugin);
 	}
+
+	@Override
+	public Inventory getBlockInventory() {
+		return null;  //To change body of implemented methods use File | Settings | File Templates.
+	}
 }
 
