@@ -23,8 +23,9 @@
 package org.simiancage.bukkit.DwarfForge;
 
 
-import net.minecraft.server.FurnaceRecipes;
 import net.minecraft.server.ItemStack;
+import net.minecraft.server.RecipesFurnace;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -73,7 +74,7 @@ class Utils {
 
 	static Material resultOfCooking(Material mat) {
 		// ToDo checkhere, again some nms code
-		ItemStack item = FurnaceRecipes.getInstance().getResult(mat.getId());
+		ItemStack item = RecipesFurnace.getInstance().getResult(mat.getId());
 		return (item != null)
 				? new CraftItemStack(item).getType()
 				: null;
