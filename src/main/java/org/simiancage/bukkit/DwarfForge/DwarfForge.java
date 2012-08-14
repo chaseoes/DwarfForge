@@ -19,20 +19,22 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 */
-
 package org.simiancage.bukkit.DwarfForge;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
-import java.util.HashMap;
-
-
 public class DwarfForge extends JavaPlugin {
-
 	private Log log;
 	private Config config;
 	private FileConfiguration configuration;
@@ -47,7 +49,6 @@ public class DwarfForge extends JavaPlugin {
 			new DFBlockListener(),
 			new DFInventoryListener()
 	};
-
 	static DwarfForge main;
 
 	@Override
@@ -57,7 +58,6 @@ public class DwarfForge extends JavaPlugin {
 		log = Log.getInstance(main);
 		config = Config.getInstance();
 		config.setupConfig(configuration, main);
-
 
 		restoreActiveForges(Forge.active);
 		for (Listener listener : listeners) {
@@ -71,7 +71,6 @@ public class DwarfForge extends JavaPlugin {
 			log.info("Unable to submit metrics");
 		}
 
-
 		log.enableMsg();
 	}
 
@@ -82,19 +81,10 @@ public class DwarfForge extends JavaPlugin {
 		}
 		saveActiveForges(Forge.active);
 
-
 		main = null;
 
 		log.disableMsg();
 	}
-
-/*    void logInfo(String msg) {
-        log.info("[DwarfForge] " + msg);
-    }
-
-    void logSevere(String msg) {
-        log.severe("[DwarfForge] " + msg);
-    }*/
 
 	int queueTask(Runnable task) {
 		return getServer().getScheduler().scheduleSyncDelayedTask(this, task);
@@ -111,10 +101,6 @@ public class DwarfForge extends JavaPlugin {
 	void cancelTask(int id) {
 		getServer().getScheduler().cancelTask(id);
 	}
-
-/*    void registerEvent(Event.Type type, org.bukkit.event.Listener listener, Event.Priority priority) {
-        getServer().getPluginManager().registerEvent(type, listener, priority, this);
-    }*/
 
 	static void saveActiveForges(HashMap<Location, Forge> activeForges) {
 		// TODO: Clean up this stupidity.
@@ -173,6 +159,5 @@ public class DwarfForge extends JavaPlugin {
 			}
 		}
 	}
-
 }
 

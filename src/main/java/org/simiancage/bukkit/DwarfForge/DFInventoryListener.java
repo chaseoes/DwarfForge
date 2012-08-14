@@ -19,9 +19,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 */
-
 package org.simiancage.bukkit.DwarfForge;
-
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,7 +31,6 @@ import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
 
 class DFInventoryListener implements DwarfForge.Listener, Listener {
 	private DwarfForge main;
@@ -73,6 +70,7 @@ class DFInventoryListener implements DwarfForge.Listener, Listener {
 			main.queueTask(new Runnable() {
 				public void run() {
 					ItemStack item = bucket;
+					boolean savedBucket = false;
 
 					if (forge != null) {    // It is a Dwarf Forge.
 						Block inputChest = forge.getInputChest();
@@ -87,12 +85,21 @@ class DFInventoryListener implements DwarfForge.Listener, Listener {
 						if (item != null && inputChest != null) {
 							item = forge.addTo(item, inputChest, false);
 						}
-					}
 
-					if (item != null) {
-						Inventory inv = ((Furnace) block.getState()).getInventory();
-						ItemStack curr = inv.getItem(Forge.FUEL_SLOT);
-						if (curr == null || curr.getType() == Material.AIR) {   // Is fuel slot empty?
+						if (item == null) {
+							savedBucket = true;
+						}
+					}
+					Inventory inv = ((Furnace) block.getState()).getInventory();
+					ItemStack curr = inv.getItem(Forge.FUEL_SLOT);
+					if (item == null) {
+						// if we saved the bucket, we need to delete the original one in the forge (fix for MC 1.3.1)
+						if (savedBucket && curr.getType() == Material.BUCKET) {
+							inv.setItem(Forge.FUEL_SLOT, new ItemStack(Material.AIR));
+						}
+					} else {
+						// Is fuel slot empty?
+						if (curr == null || curr.getType() == Material.AIR) {
 							// Yes, place it in the fuel slot.
 							inv.setItem(Forge.FUEL_SLOT, item);
 						} else {
