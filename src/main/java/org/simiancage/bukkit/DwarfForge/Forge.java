@@ -19,11 +19,12 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 */
-
 package org.simiancage.bukkit.DwarfForge;
 
+import java.util.HashMap;
 
 import net.minecraft.server.BlockFurnace;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -35,38 +36,28 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.FurnaceAndDispenser;
 
-import java.util.HashMap;
-
-
 class Forge implements Runnable {
-
 	static final int RAW_SLOT = 0;
 	static final int FUEL_SLOT = 1;
 	static final int PRODUCT_SLOT = 2;
-
 	private static final int INVALID_TASK = -1;
-
 	// These durations must all be less than max short.
 	// Additionally, TASK_DURATION + AVOID_STAMPEDE < BURN_DURATION.
 	private static final short ZERO_DURATION = 0;
 	private static final short AVOID_STAMPEDE = 2 * Utils.MINS;
 	private static final short TASK_DURATION = 20 * Utils.MINS;
 	private static final short BURN_DURATION = 25 * Utils.MINS;
-
 	private Log log = Log.getLogger();
 	private static Config config;
 	static HashMap<Location, Forge> active = new HashMap<Location, Forge>();
 	private static java.util.Random rnd = new java.util.Random();
 
-
 	private static short avoidStampedeDelay() {
 		return (short) rnd.nextInt(AVOID_STAMPEDE);
 	}
 
-
 	private Location loc;
 	private int task = INVALID_TASK;
-
 
 	public Forge(Block block) {
 		this.loc = block.getLocation();
@@ -155,7 +146,6 @@ class Forge implements Runnable {
 		state.setBurnTime(ZERO_DURATION);
 		state.update();
 	}
-
 
 	// Returns false if forge should be deactivated.
 	boolean updateProduct() {
@@ -262,7 +252,6 @@ class Forge implements Runnable {
 			return Utils.canCook(raw.getType());
 		}
 
-
 		return true;
 	}
 
@@ -326,7 +315,7 @@ class Forge implements Runnable {
 		if (isValid()) {
 			if (config.isRequireFuel()) {
 
-				if (!updateProduct() || !updateRawMaterial() || !updateFuel()) {
+				if (!updateFuel() || !updateProduct() || !updateRawMaterial()) {
 					// Something is preventing further smelting. Unload fuel,
 					// deactivate, and let it burn out naturally.
 					// TODO This may not be the best option...? Try it for now.
@@ -349,7 +338,6 @@ class Forge implements Runnable {
 			if (!config.isRequireFuel()) {
 				douse();
 			}
-
 		}
 	}
 
@@ -561,6 +549,5 @@ class Forge implements Runnable {
 		// Otherwise, null.
 		return null;
 	}
-
 }
 

@@ -62,34 +62,34 @@ class DFInventoryListener implements DwarfForge.Listener, Listener {
 		final Block block = event.getBlock();
 		final Forge forge = Forge.find(block);
 
+		if (forge == null) {
+			return;
+		}
+
 		// If it was a lava bucket that was used, preserve an empty bucket
-		// whether it was a Dwarf Forge or not.
 		if (event.getFuel().getType() == Material.LAVA_BUCKET) {
 			final ItemStack bucket = new ItemStack(Material.BUCKET, 1);
-
 			main.queueTask(new Runnable() {
 				public void run() {
 					ItemStack item = bucket;
 					boolean savedBucket = false;
+					Block inputChest = forge.getInputChest();
+					Block outputChest = forge.getOutputChest();
 
-					if (forge != null) {    // It is a Dwarf Forge.
-						Block inputChest = forge.getInputChest();
-						Block outputChest = forge.getOutputChest();
-
-						// First try putting the bucket in the output chest.
-						if (item != null && outputChest != null) {
-							item = forge.addTo(item, outputChest, false);
-						}
-
-						// Next try putting the bucket in the input chest.
-						if (item != null && inputChest != null) {
-							item = forge.addTo(item, inputChest, false);
-						}
-
-						if (item == null) {
-							savedBucket = true;
-						}
+					// First try putting the bucket in the output chest.
+					if (item != null && outputChest != null) {
+						item = forge.addTo(item, outputChest, false);
 					}
+
+					// Next try putting the bucket in the input chest.
+					if (item != null && inputChest != null) {
+						item = forge.addTo(item, inputChest, false);
+					}
+
+					if (item == null) {
+						savedBucket = true;
+					}
+
 					Inventory inv = ((Furnace) block.getState()).getInventory();
 					ItemStack curr = inv.getItem(Forge.FUEL_SLOT);
 					if (item == null) {
@@ -104,16 +104,13 @@ class DFInventoryListener implements DwarfForge.Listener, Listener {
 							inv.setItem(Forge.FUEL_SLOT, item);
 						} else {
 							// Not empty; no place left to put the bucket. Drop it to the ground.
-							block.getWorld().dropItemNaturally(block.getLocation(), item);
+							if (curr.getType() != Material.BUCKET) {
+								block.getWorld().dropItemNaturally(block.getLocation(), item);
+							}
 						}
 					}
 				}
 			});
-		}
-
-		// Do nothing else if the furnace isn't a Dwarf Forge.
-		if (forge == null) {
-			return;
 		}
 
 		// Reload fuel if required.
