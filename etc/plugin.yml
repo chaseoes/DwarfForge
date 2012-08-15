@@ -12,12 +12,12 @@ permissions:
             dwarfforge.use: true
             dwarfforge.destroy: true
     dwarfforge.create:
-        decription: Allows you to create a Dwarven forge.
+        description: Allows you to create a Dwarven forge.
         default: true
     dwarfforge.use:
-        decription: Allows you to use a Dwarven forge.
+        description: Allows you to use a Dwarven forge.
         default: true
     dwarfforge.destroy:
-        decription: Allows you to destroy a Dwarven forge.
+        description: Allows you to destroy a Dwarven forge.
         default: true
 
