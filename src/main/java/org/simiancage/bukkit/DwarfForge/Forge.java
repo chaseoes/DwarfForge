@@ -315,7 +315,7 @@ class Forge implements Runnable {
 		if (isValid()) {
 			if (config.isRequireFuel()) {
 
-				if (!updateFuel() || !updateProduct() || !updateRawMaterial()) {
+				if (!updateProduct() || !updateRawMaterial() || !updateFuel()) {
 					// Something is preventing further smelting. Unload fuel,
 					// deactivate, and let it burn out naturally.
 					// TODO This may not be the best option...? Try it for now.
