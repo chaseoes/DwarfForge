@@ -138,6 +138,7 @@ class Forge implements Runnable {
 		internalsSetFurnaceBurning(true);
 		state.setBurnTime(BURN_DURATION);
 		state.update();
+		Log.getLogger().debug("Ignited ", getBlock());
 	}
 
 	private void douse() {
@@ -145,6 +146,7 @@ class Forge implements Runnable {
 		internalsSetFurnaceBurning(false);
 		state.setBurnTime(ZERO_DURATION);
 		state.update();
+		Log.getLogger().debug("Doused ", getBlock());
 	}
 
 	// Returns false if forge should be deactivated.
@@ -321,6 +323,7 @@ class Forge implements Runnable {
 					// TODO This may not be the best option...? Try it for now.
 					deactivate();
 					unloadFuel();
+					Log.getLogger().debug("Stopped smelting");
 				}
 			} else {
 				// No fuel required; only user interaction changes forge state.
@@ -329,6 +332,7 @@ class Forge implements Runnable {
 				updateProduct();
 				updateRawMaterial();
 				ignite();
+				Log.getLogger().debug("Continued smelting");
 			}
 		} else {
 			// No longer valid: deactivate.
@@ -338,6 +342,7 @@ class Forge implements Runnable {
 			if (!config.isRequireFuel()) {
 				douse();
 			}
+			Log.getLogger().debug("Doused the furnace during update");
 		}
 	}
 
@@ -381,15 +386,14 @@ class Forge implements Runnable {
 
 			// Remove from active forge map.
 			active.remove(loc);
-
-			// Cancel repeating task.
-			if (task != INVALID_TASK) {
-				DwarfForge.main.cancelTask(task);
-				task = INVALID_TASK;
-			}
-
-			// TODO force save
 		}
+		// Cancel repeating task.
+		if (task != INVALID_TASK) {
+			DwarfForge.main.cancelTask(task);
+			task = INVALID_TASK;
+		}
+
+		// TODO force save
 
 		// TODO Sanity check: assert(task == INVALID_TASK)
 	}
@@ -401,6 +405,7 @@ class Forge implements Runnable {
 	// Manual, user interaction to startup/shutdown a forge.
 	void toggle() {
 		if (isActive()) {
+			Log.getLogger().debug("Forge is active");
 			if (config.isRequireFuel()) {
 				unloadFuel();
 				// TODO Save partial fuel.
@@ -408,6 +413,7 @@ class Forge implements Runnable {
 			deactivate();
 			douse();
 		} else {
+			Log.getLogger().debug("Forge is not active");
 			activate();
 			((Furnace) getBlock().getState()).setCookTime(config.cookTime());
 		}

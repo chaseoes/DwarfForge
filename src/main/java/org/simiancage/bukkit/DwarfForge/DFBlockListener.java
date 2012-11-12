@@ -19,9 +19,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 */
-
 package org.simiancage.bukkit.DwarfForge;
-
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -34,7 +32,6 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
-
 
 class DFBlockListener implements DwarfForge.Listener, Listener {
 	private DwarfForge main;
@@ -124,6 +121,7 @@ class DFBlockListener implements DwarfForge.Listener, Listener {
 		}
 
 		// Queue up task to toggle the forge.
+		Log.getLogger().debug("Toggleing forge");
 		final Forge forge = Forge.find(block);
 		main.queueTask(new Runnable() {
 			public void run() {
