@@ -177,5 +177,11 @@ public class BetterChest implements Chest {
 	public Inventory getBlockInventory() {
 		return null;  //To change body of implemented methods use File | Settings | File Templates.
 	}
+
+	@Override
+	public Location getLocation(Location arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 

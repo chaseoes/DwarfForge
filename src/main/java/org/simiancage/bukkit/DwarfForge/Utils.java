@@ -23,13 +23,13 @@
 package org.simiancage.bukkit.DwarfForge;
 
 
-import net.minecraft.server.ItemStack;
-import net.minecraft.server.RecipesFurnace;
+import net.minecraft.server.v1_4_6.ItemStack;
+import net.minecraft.server.v1_4_6.RecipesFurnace;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_4_6.inventory.CraftItemStack;
 
 
 class Utils {
@@ -76,7 +76,7 @@ class Utils {
 		// ToDo checkhere, again some nms code
 		ItemStack item = RecipesFurnace.getInstance().getResult(mat.getId());
 		return (item != null)
-				? new CraftItemStack(item).getType()
+				? CraftItemStack.asCraftMirror(item).getType()
 				: null;
 	}
 
