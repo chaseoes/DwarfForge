@@ -280,5 +280,11 @@ public class DoubleInventory implements Inventory {
 
 		return result;
 	}
+
+	@Override
+	public boolean containsAtLeast(ItemStack arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
 
