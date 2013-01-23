@@ -24,7 +24,7 @@ package org.simiancage.bukkit.DwarfForge;
 import java.util.HashMap;
 
 
-import net.minecraft.server.v1_4_6.BlockFurnace;
+import net.minecraft.server.v1_4_R1.BlockFurnace;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,7 +32,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Furnace;
-import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.FurnaceAndDispenser;
@@ -49,7 +49,6 @@ class Forge implements Runnable {
 	private static final short TASK_DURATION = 20 * Utils.MINS;
 	private static final short BURN_DURATION = 25 * Utils.MINS;
 	private Log log = Log.getLogger();
-	private static Config config;
 	static HashMap<Location, Forge> active = new HashMap<Location, Forge>();
 	private static java.util.Random rnd = new java.util.Random();
 
@@ -62,12 +61,10 @@ class Forge implements Runnable {
 
 	public Forge(Block block) {
 		this.loc = block.getLocation();
-		config = Config.getInstance();
 		log.debug("Forge enabled at", loc.toString());
 	}
 
 	public Forge(Location loc) {
-		config = Config.getInstance();
 		this.loc = loc;
 		log.debug("Forge enabled at", loc.toString());
 	}
@@ -95,7 +92,7 @@ class Forge implements Runnable {
 	}
 
 	static boolean isValid(Block block) {
-		return isValid(block, config.getMaxStackVertical());
+		return isValid(block, Config.getMaxStackVertical());
 	}
 
 	// This static version is kept around so that other code may check if a block
@@ -164,7 +161,7 @@ class Forge implements Runnable {
 
 			// Special case: if charcoal is product and fuel is required,
 			// put it back into input chest.
-			if (config.isRequireFuel() && item.getType() == Material.COAL) {
+			if (Config.isRequireFuel() && item.getType() == Material.COAL) {
 				dest = getInputChest();
 			}
 
@@ -236,7 +233,7 @@ class Forge implements Runnable {
 						}
 
 						// Set cook time.
-						((Furnace) getBlock().getState()).setCookTime(config.cookTime());
+						((Furnace) getBlock().getState()).setCookTime(Config.cookTime());
 
 						itemFound = true;
 						break;
@@ -316,7 +313,7 @@ class Forge implements Runnable {
 		// inactive forge?
 
 		if (isValid()) {
-			if (config.isRequireFuel()) {
+			if (Config.isRequireFuel()) {
 
 				if (!updateProduct() || !updateRawMaterial() || !updateFuel()) {
 					// Something is preventing further smelting. Unload fuel,
@@ -340,7 +337,7 @@ class Forge implements Runnable {
 			deactivate();
 
 			// Douse only if fuel is not required.
-			if (!config.isRequireFuel()) {
+			if (!Config.isRequireFuel()) {
 				douse();
 			}
 			Log.getLogger().debug("Doused the furnace during update");
@@ -358,7 +355,7 @@ class Forge implements Runnable {
 		// the new cook time.
 		update();
 		if (isActive()) {
-			((Furnace) getBlock().getState()).setCookTime(config.cookTime());
+			((Furnace) getBlock().getState()).setCookTime(Config.cookTime());
 		}
 	}
 
@@ -407,7 +404,7 @@ class Forge implements Runnable {
 	void toggle() {
 		if (isActive()) {
 			Log.getLogger().debug("Forge is active");
-			if (config.isRequireFuel()) {
+			if (Config.isRequireFuel()) {
 				unloadFuel();
 				// TODO Save partial fuel.
 			}
@@ -416,7 +413,7 @@ class Forge implements Runnable {
 		} else {
 			Log.getLogger().debug("Forge is not active");
 			activate();
-			((Furnace) getBlock().getState()).setCookTime(config.cookTime());
+			((Furnace) getBlock().getState()).setCookTime(Config.cookTime());
 		}
 	}
 
@@ -426,7 +423,7 @@ class Forge implements Runnable {
 	}
 
 	private static Block getForgeChest(Block block, BlockFace dir) {
-		return getForgeChest(block, dir, config.getMaxStackHorizontal());
+		return getForgeChest(block, dir, Config.getMaxStackHorizontal());
 	}
 
 	private static Block getForgeChest(Block block, BlockFace dir, int stack) {

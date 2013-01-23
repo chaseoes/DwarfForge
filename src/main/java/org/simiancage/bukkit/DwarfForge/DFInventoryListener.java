@@ -34,9 +34,7 @@ import org.bukkit.inventory.ItemStack;
 
 class DFInventoryListener implements DwarfForge.Listener, Listener {
 	private DwarfForge main;
-	private Log log = Log.getLogger();
-	private Config config = Config.getInstance();
-
+	
 	@Override
 	public void onEnable(DwarfForge main) {
 		this.main = main;
@@ -114,7 +112,7 @@ class DFInventoryListener implements DwarfForge.Listener, Listener {
 		}
 
 		// Reload fuel if required.
-		if (config.isRequireFuel()) {
+		if (Config.isRequireFuel()) {
 			main.queueTask(new Runnable() {
 				public void run() {
 					forge.burnUpdate();

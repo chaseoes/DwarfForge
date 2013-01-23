@@ -1,4 +1,5 @@
-package org.simiancage.bukkit.DwarfForge; /**
+package org.simiancage.bukkit.DwarfForge;
+/**
  *
  * PluginName: DwarfForge
  * Class: Config
@@ -25,7 +26,6 @@ import java.net.URL;
  *
  * @author Don Redhorse
  */
-@SuppressWarnings({"UnusedDeclaration"})
 public class Config {
 
 	/**
@@ -95,12 +95,10 @@ public class Config {
 	/**
 	 * Link to the location of the plugin website
 	 */
-	@SuppressWarnings({"FieldCanBeLocal"})
 	private final String pluginSlug = "http://dev.bukkit.org/server-mods/dwarfforge";
 	/**
 	 * Link to the location of the recent version number, the file should be a text with just the number
 	 */
-	@SuppressWarnings({"FieldCanBeLocal"})
 	private final String versionURL = "https://raw.github.com/dredhorse/DwarfForge/master/etc/dwarfforge.ver";
 	// The org.simiancage.bukkit.DwarfForge.LoggerClass should be renamed to the name of the class you did change the original org.simiancage.bukkit.DwarfForge.LoggerClass too.
 	/**
