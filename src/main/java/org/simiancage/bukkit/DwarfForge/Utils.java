@@ -23,13 +23,13 @@
 package org.simiancage.bukkit.DwarfForge;
 
 
-import net.minecraft.server.v1_5_R1.ItemStack;
-import net.minecraft.server.v1_5_R1.RecipesFurnace;
+import net.minecraft.server.v1_5_R2.ItemStack;
+import net.minecraft.server.v1_5_R2.RecipesFurnace;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_5_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_5_R2.inventory.CraftItemStack;
 
 
 class Utils {

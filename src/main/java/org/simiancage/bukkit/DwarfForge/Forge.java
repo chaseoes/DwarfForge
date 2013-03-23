@@ -24,7 +24,8 @@ package org.simiancage.bukkit.DwarfForge;
 import java.util.HashMap;
 
 
-import net.minecraft.server.v1_5_R1.BlockFurnace;
+import net.minecraft.server.v1_5_R2.BlockFurnace;
+import org.bukkit.craftbukkit.v1_5_R2.CraftWorld;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,7 +33,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Furnace;
-import org.bukkit.craftbukkit.v1_5_R1.CraftWorld;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.FurnaceAndDispenser;

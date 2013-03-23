@@ -16,6 +16,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 
 /**
@@ -567,7 +568,7 @@ afterwards parsable again from the configuration class of bukkit
 
 		loadCustomConfig();
 
-		log.info("Configuration v." + configVer + " loaded.");
+		log.info("Configuration v" + configVer + " loaded.");
 	}
 
 
@@ -655,7 +656,7 @@ afterwards parsable again from the configuration class of bukkit
 	 * will set #configRequiresUpdate to true if versions are different
 	 */
 	private void updateNecessary() {
-		if (configVer.equalsIgnoreCase(configCurrent)) {
+		if (!isNewerVersion(configCurrent, configVer)) {
 			log.info("Config is up to date");
 		} else {
 			log.warning("Config is not up to date!");
@@ -684,7 +685,7 @@ afterwards parsable again from the configuration class of bukkit
 				newVersion += line;
 			}
 			in.close();
-			if (newVersion.equals(thisVersion)) {
+			if (!isNewerVersion(newVersion, thisVersion)) {
 				log.info("is up to date at version "
 						+ thisVersion + ".");
 
@@ -698,6 +699,7 @@ afterwards parsable again from the configuration class of bukkit
 			log.warning("Error checking for update.", ex);
 		}
 	}
+
 
 // Updating the config
 
@@ -752,6 +754,34 @@ afterwards parsable again from the configuration class of bukkit
 			saved = writeConfig();
 		}
 		return saved;
+	}
+	
+// Version comparison functions
+	/**
+	 * Checks if the first input is a newer version number than the second input
+	 * @param version1 the version to check
+	 * @param version2 the version to check against
+	 * @return true if the first input is a newer version number, false if it isn't
+	 */
+	private boolean isNewerVersion(String version1, String version2) {
+        String s1 = normalisedVersion(version1);
+        String s2 = normalisedVersion(version2);
+        int cmp = s1.compareTo(s2);
+        //String cmpStr = cmp < 0 ? "<" : cmp > 0 ? ">" : "==";
+        return cmp>0;
+    }
+	
+	private String normalisedVersion(String version) {
+        return normalisedVersion(version, ".", 4);
+    }
+
+	private String normalisedVersion(String version, String sep, int maxWidth) {
+        String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
+        StringBuilder sb = new StringBuilder();
+        for (String s : split) {
+            sb.append(String.format("%" + maxWidth + 's', s));
+        }
+        return sb.toString();
 	}
 
 }
