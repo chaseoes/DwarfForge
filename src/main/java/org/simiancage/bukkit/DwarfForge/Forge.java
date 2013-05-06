@@ -24,8 +24,8 @@ package org.simiancage.bukkit.DwarfForge;
 import java.util.HashMap;
 
 
-import net.minecraft.server.v1_5_R2.BlockFurnace;
-import org.bukkit.craftbukkit.v1_5_R2.CraftWorld;
+import net.minecraft.server.v1_5_R3.BlockFurnace;
+import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
