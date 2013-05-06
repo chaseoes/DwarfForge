@@ -95,6 +95,10 @@ public class BetterChest implements Chest {
 	public Location getLocation() {
 		return ref.getLocation();
 	}
+	
+	public Location getLocation(Location loc) {
+		return ref.getLocation(loc);
+	}
 
 	public void setData(MaterialData data) {
 		ref.setData(data);
@@ -115,7 +119,10 @@ public class BetterChest implements Chest {
 	public boolean update(boolean force) {
 		return ref.update(force);
 	}
-
+	
+	public boolean update(boolean force, boolean applyPhysics) {
+		return ref.update(force, applyPhysics);
+	}
 
 	// Methods inherited from ContainerBlock
 	public Inventory getInventory() {
@@ -175,13 +182,7 @@ public class BetterChest implements Chest {
 
 	@Override
 	public Inventory getBlockInventory() {
-		return null;  //To change body of implemented methods use File | Settings | File Templates.
-	}
-
-	@Override
-	public Location getLocation(Location arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		return ref.getBlockInventory();
 	}
 }
 

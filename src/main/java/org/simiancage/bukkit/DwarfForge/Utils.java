@@ -23,13 +23,13 @@
 package org.simiancage.bukkit.DwarfForge;
 
 
-import net.minecraft.server.v1_4_6.ItemStack;
-import net.minecraft.server.v1_4_6.RecipesFurnace;
+import net.minecraft.server.v1_5_R3.ItemStack;
+import net.minecraft.server.v1_5_R3.RecipesFurnace;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_4_6.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_5_R3.inventory.CraftItemStack;
 
 
 class Utils {
@@ -37,8 +37,6 @@ class Utils {
 	static final short SECS = 20;           // 20 server ticks
 	static final short MINS = 60 * SECS;
 
-	private Log log = Log.getLogger();
-	private Config config = Config.getInstance();
 
 	// Logs are usually considered a typical fuel, but the Dwarfs were not
 	// stupid. Cook logs into charcoal, a much more efficient fuel.
