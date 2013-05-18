@@ -20,7 +20,7 @@
     THE SOFTWARE.
 */
 
-package org.simiancage.bukkit.DwarfForge;
+package com.chaseoes.dwarfforge;
 
 
 import org.bukkit.Chunk;

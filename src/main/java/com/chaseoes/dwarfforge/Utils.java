@@ -20,7 +20,7 @@
     THE SOFTWARE.
 */
 
-package org.simiancage.bukkit.DwarfForge;
+package com.chaseoes.dwarfforge;
 
 
 import net.minecraft.server.v1_5_R3.ItemStack;

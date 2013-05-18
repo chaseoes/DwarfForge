@@ -1,4 +1,4 @@
-package org.simiancage.bukkit.DwarfForge;
+package com.chaseoes.dwarfforge;
 /**
  *
  * PluginName: DwarfForge
