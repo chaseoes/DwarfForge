@@ -32,7 +32,6 @@ import java.util.logging.Logger;
  * @author Don Redhorse
  * @author xZise
  */
-@SuppressWarnings({"WeakerAccess", "UnusedDeclaration"})
 public class Log {
     /**
      * Reference to the logger

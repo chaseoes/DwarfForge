@@ -65,7 +65,7 @@ public class DwarfForge extends JavaPlugin {
 		}
 
 		try {
-			Metrics metrics = new Metrics(main);
+			MetricsLite metrics = new MetricsLite(main);
 			metrics.start();
 		} catch (IOException e) {
 			log.info("Unable to submit metrics");
