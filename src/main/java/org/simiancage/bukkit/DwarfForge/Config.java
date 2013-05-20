@@ -100,7 +100,7 @@ public class Config {
 	/**
 	 * Link to the location of the recent version number, the file should be a text with just the number
 	 */
-	private final String versionURL = "https://raw.github.com/DragonRealms/DwarfForge/master/etc/dwarfforge.ver";
+	private final String versionURL = "https://raw.github.com/chaseoes/DwarfForge/master/etc/dwarfforge.ver";
 	// The org.simiancage.bukkit.DwarfForge.LoggerClass should be renamed to the name of the class you did change the original org.simiancage.bukkit.DwarfForge.LoggerClass too.
 	/**
 	 * Reference of the org.simiancage.bukkit.DwarfForge.LoggerClass, needs to be renamed to correct name.
