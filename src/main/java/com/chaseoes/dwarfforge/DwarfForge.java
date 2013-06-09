@@ -35,9 +35,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class DwarfForge extends JavaPlugin {
-	private Log log;
+	
 	private Config config;
 	private FileConfiguration configuration;
+	static DwarfForge instance;
+	
+	public static DwarfForge getInstance() {
+		return instance;
+	}
 
 	interface Listener {
 		void onEnable(DwarfForge main);
@@ -49,15 +54,13 @@ public class DwarfForge extends JavaPlugin {
 			new DFBlockListener(),
 			new DFInventoryListener()
 	};
-	static DwarfForge main;
+	
 
-	@Override
 	public void onEnable() {
-		main = this;
+		instance = this;
 
-		log = Log.getInstance(main);
 		config = Config.getInstance();
-		config.setupConfig(configuration, main);
+		config.setupConfig(configuration, this);
 
 		restoreActiveForges(Forge.active);
 		for (Listener listener : listeners) {
@@ -65,25 +68,20 @@ public class DwarfForge extends JavaPlugin {
 		}
 
 		try {
-			MetricsLite metrics = new MetricsLite(main);
+			MetricsLite metrics = new MetricsLite(this);
 			metrics.start();
 		} catch (IOException e) {
-			log.info("Unable to submit metrics");
+			// Failed to submit metrics. :(
 		}
-
-		log.enableMsg();
 	}
 
-	@Override
 	public void onDisable() {
 		for (Listener listener : listeners) {
 			listener.onDisable();
 		}
 		saveActiveForges(Forge.active);
 
-		main = null;
-
-		log.disableMsg();
+		instance = null;
 	}
 
 	int queueTask(Runnable task) {
@@ -102,9 +100,9 @@ public class DwarfForge extends JavaPlugin {
 		getServer().getScheduler().cancelTask(id);
 	}
 
-	static void saveActiveForges(HashMap<Location, Forge> activeForges) {
+	public void saveActiveForges(HashMap<Location, Forge> activeForges) {
 		// TODO: Clean up this stupidity.
-		main.saveActive(activeForges);
+		saveActive(activeForges);
 	}
 
 	void saveActive(HashMap<Location, Forge> activeForges) {
@@ -121,15 +119,14 @@ public class DwarfForge extends JavaPlugin {
 				count += 1;
 			}
 			out.close();
-			log.info("Saved " + count + " active Forges.");
 		} catch (Exception e) {
-			log.severe("Could not save active forges to file: " + e);
+			e.printStackTrace();
 		}
 	}
 
-	static void restoreActiveForges(HashMap<Location, Forge> activeForges) {
+	public void restoreActiveForges(HashMap<Location, Forge> activeForges) {
 		// TODO: Clean up this stupidity.
-		main.restoreActive(activeForges);
+		restoreActive(activeForges);
 	}
 
 	void restoreActive(HashMap<Location, Forge> activeForges) {
@@ -153,9 +150,8 @@ public class DwarfForge extends JavaPlugin {
 					}
 				}
 				in.close();
-				log.info("Restored " + count + " active Forges.");
 			} catch (Exception e) {
-				log.severe("Something went wrong with file while restoring forges: " + e);
+				e.printStackTrace();
 			}
 		}
 	}

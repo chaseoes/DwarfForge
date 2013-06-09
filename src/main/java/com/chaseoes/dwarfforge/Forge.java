@@ -48,7 +48,6 @@ class Forge implements Runnable {
 	private static final short AVOID_STAMPEDE = 2 * Utils.MINS;
 	private static final short TASK_DURATION = 20 * Utils.MINS;
 	private static final short BURN_DURATION = 25 * Utils.MINS;
-	private Log log = Log.getLogger();
 	static HashMap<Location, Forge> active = new HashMap<Location, Forge>();
 	private static java.util.Random rnd = new java.util.Random();
 
@@ -61,12 +60,10 @@ class Forge implements Runnable {
 
 	public Forge(Block block) {
 		this.loc = block.getLocation();
-		log.debug("Forge enabled at", loc.toString());
 	}
 
 	public Forge(Location loc) {
 		this.loc = loc;
-		log.debug("Forge enabled at", loc.toString());
 	}
 
 	@Override
@@ -102,7 +99,6 @@ class Forge implements Runnable {
 		if (!Utils.isBlockOfType(block, Material.FURNACE, Material.BURNING_FURNACE)) {
 			return false;
 		}
-		Log.getLogger().debug("Stack", stack);
 		// Can't be a Forge beyond the vertical stacking limit.
 		if (stack <= 0) {
 			return false;
@@ -136,7 +132,6 @@ class Forge implements Runnable {
 		internalsSetFurnaceBurning(true);
 		state.setBurnTime(BURN_DURATION);
 		state.update();
-		Log.getLogger().debug("Ignited ", getBlock());
 	}
 
 	private void douse() {
@@ -144,7 +139,6 @@ class Forge implements Runnable {
 		internalsSetFurnaceBurning(false);
 		state.setBurnTime(ZERO_DURATION);
 		state.update();
-		Log.getLogger().debug("Doused ", getBlock());
 	}
 
 	// Returns false if forge should be deactivated.
@@ -321,7 +315,6 @@ class Forge implements Runnable {
 					// TODO This may not be the best option...? Try it for now.
 					deactivate();
 					unloadFuel();
-					Log.getLogger().debug("Stopped smelting");
 				}
 			} else {
 				// No fuel required; only user interaction changes forge state.
@@ -330,7 +323,6 @@ class Forge implements Runnable {
 				updateProduct();
 				updateRawMaterial();
 				ignite();
-				Log.getLogger().debug("Continued smelting");
 			}
 		} else {
 			// No longer valid: deactivate.
@@ -340,7 +332,6 @@ class Forge implements Runnable {
 			if (!Config.isRequireFuel()) {
 				douse();
 			}
-			Log.getLogger().debug("Doused the furnace during update");
 		}
 	}
 
@@ -371,7 +362,7 @@ class Forge implements Runnable {
 			active.put(loc, this);
 
 			// Start repeating task.
-			task = DwarfForge.main.queueRepeatingTask(
+			task = DwarfForge.getInstance().queueRepeatingTask(
 					0, TASK_DURATION + avoidStampedeDelay(), this);
 
 			// TODO force save
@@ -387,7 +378,7 @@ class Forge implements Runnable {
 		}
 		// Cancel repeating task.
 		if (task != INVALID_TASK) {
-			DwarfForge.main.cancelTask(task);
+			DwarfForge.getInstance().cancelTask(task);
 			task = INVALID_TASK;
 		}
 
@@ -403,7 +394,6 @@ class Forge implements Runnable {
 	// Manual, user interaction to startup/shutdown a forge.
 	void toggle() {
 		if (isActive()) {
-			Log.getLogger().debug("Forge is active");
 			if (Config.isRequireFuel()) {
 				unloadFuel();
 				// TODO Save partial fuel.
@@ -411,7 +401,6 @@ class Forge implements Runnable {
 			deactivate();
 			douse();
 		} else {
-			Log.getLogger().debug("Forge is not active");
 			activate();
 			((Furnace) getBlock().getState()).setCookTime(Config.cookTime());
 		}

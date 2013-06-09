@@ -107,7 +107,6 @@ public class Config {
 	 *
 	 * @see Log
 	 */
-	private static Log log;
 
 	// ToDo Change the configCurrent if the config changes!
 	/**
@@ -201,29 +200,18 @@ afterwards parsable again from the configuration class of bukkit
 		maxStackVertical = config.getInt(KEY_MAX_STACK_VERTICAL);
 		allowLavaExploit = config.getBoolean(KEY_ALLOW_LAVA_EXPLOIT);
 
-		log.debug(KEY_COOK_TIME, cookTime);
-		log.debug(KEY_REQUIRE_FUEL, requireFuel);
-		log.debug(KEY_ALLOW_CRAFTED_FUEL, allowCraftedFuel);
-		log.debug(KEY_MAX_STACK_HORIZONTAL, maxStackHorizontal);
-		log.debug(KEY_MAX_STACK_VERTICAL, maxStackVertical);
-		log.debug(KEY_ALLOW_LAVA_EXPLOIT, allowLavaExploit);
-
 		// Some limits...
 		if (maxStackVertical < 0) {
 			maxStackVertical = 0;
-			log.error("Negative " + KEY_MAX_STACK_VERTICAL + ", setting to ZERO!");
 		}
 		if (maxStackHorizontal < 0) {
-			log.error("Negative " + KEY_MAX_STACK_HORIZONTAL + ", setting to ZERO!");
 			maxStackHorizontal = 0;
 		}
 
 		if (cookTime < 0) {
-			log.error("Negative " + KEY_COOK_TIME + ", setting to ZERO!");
 			cookTime = 0;
 		}
 		if (cookTime > MAX_COOK_TIME) {
-			log.error(KEY_COOK_TIME + " is to high! Setting to " + MAX_COOK_TIME);
 			cookTime = MAX_COOK_TIME;
 		}
 
@@ -325,7 +313,6 @@ afterwards parsable again from the configuration class of bukkit
 			instance = new Config();
 		}
 
-		log = Log.getLogger();
 		return instance;
 	}
 
@@ -342,7 +329,6 @@ afterwards parsable again from the configuration class of bukkit
 			instance = new Config();
 		}
 
-		log = Log.getLogger();
 		configFile = configuratonFile;
 		return instance;
 	}
@@ -480,7 +466,6 @@ afterwards parsable again from the configuration class of bukkit
 		this.plugin = plugin;
 // Checking if config file exists, if not create it
 		if (!(new File(plugin.getDataFolder(), configFile)).exists()) {
-			log.info("Creating default configuration file");
 			defaultConfig();
 		}
 // Loading the config from file
@@ -519,9 +504,6 @@ afterwards parsable again from the configuration class of bukkit
 
 	private void defaultConfig() {
 		setupCustomDefaultVariables();
-		if (!writeConfig()) {
-			log.info("Using internal Defaults!");
-		}
 		config = plugin.getConfig();
 		config.addDefault("configVer", configVer);
 		config.addDefault("errorLogEnabled", errorLogEnabled);
@@ -555,20 +537,8 @@ afterwards parsable again from the configuration class of bukkit
 		checkForUpdate = config.getBoolean("checkForUpdate");
 		autoUpdateConfig = config.getBoolean("autoUpdateConfig");
 		saveConfig = config.getBoolean("saveConfig");
-		// Debug OutPut NOW!
-		if (debugLogEnabled) {
-			log.info("Debug Logging is enabled!");
-		}
-		log.debug("configCurrent", configCurrent);
-		log.debug("configVer", configVer);
-		log.debug("errorLogEnabled", errorLogEnabled);
-		log.debug("checkForUpdate", checkForUpdate);
-		log.debug("autoUpdateConfig", autoUpdateConfig);
-		log.debug("saveConfig", saveConfig);
 
 		loadCustomConfig();
-
-		log.info("Configuration v" + configVer + " loaded.");
 	}
 
 
@@ -642,9 +612,8 @@ afterwards parsable again from the configuration class of bukkit
 			success = true;
 
 		} catch (FileNotFoundException e) {
-			log.warning("Error saving the " + configFile + ".");
+			e.printStackTrace();
 		}
-		log.debug("DefaultConfig written", success);
 		return success;
 	}
 
@@ -656,13 +625,7 @@ afterwards parsable again from the configuration class of bukkit
 	 * will set #configRequiresUpdate to true if versions are different
 	 */
 	private void updateNecessary() {
-		if (!isNewerVersion(configCurrent, configVer)) {
-			log.info("Config is up to date");
-		} else {
-			log.warning("Config is not up to date!");
-			log.warning("Config File Version: " + configVer);
-			log.warning("Internal Config Version: " + configCurrent);
-			log.warning("It is suggested to update the config.yml!");
+		if (isNewerVersion(configCurrent, configVer)) {
 			configRequiresUpdate = true;
 		}
 	}
@@ -685,18 +648,10 @@ afterwards parsable again from the configuration class of bukkit
 				newVersion += line;
 			}
 			in.close();
-			if (!isNewerVersion(newVersion, thisVersion)) {
-				log.info("is up to date at version "
-						+ thisVersion + ".");
-
-			} else {
-				log.warning("is out of date!");
-				log.warning("This version: " + thisVersion + "; latest version: " + newVersion + ".");
-			}
 		} catch (MalformedURLException ex) {
-			log.warning("Error accessing update URL.", ex);
+			ex.printStackTrace();
 		} catch (IOException ex) {
-			log.warning("Error checking for update.", ex);
+			ex.printStackTrace();
 		}
 	}
 
@@ -709,13 +664,6 @@ afterwards parsable again from the configuration class of bukkit
 	private void updateConfig() {
 		if (configRequiresUpdate) {
 			configVer = configCurrent;
-			if (writeConfig()) {
-				log.info("Configuration was updated with new default values.");
-				log.info("Please change them to your liking.");
-			} else {
-				log.warning("Configuration file could not be auto updated.");
-				log.warning("Please rename " + configFile + " and try again.");
-			}
 		}
 	}
 
@@ -731,11 +679,8 @@ afterwards parsable again from the configuration class of bukkit
 		String msg;
 		if (configAvailable) {
 			loadConfig();
-			log.info("Config reloaded");
 			msg = "Config was reloaded";
 		} else {
-			log.severe("Reloading Config before it exists.");
-			log.severe("Flog the developer!");
 			msg = "Something terrible terrible did go really really wrong, see console log!";
 		}
 		return msg;
