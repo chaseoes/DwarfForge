@@ -62,7 +62,7 @@ public class DFInventoryListener implements Listener {
 			});
 		}
 
-		if (Config.isRequireFuel()) {
+		if (DwarfForge.getInstance().getConfig().getBoolean("require-fuel")) {
 			DwarfForge.getInstance().queueTask(new Runnable() {
 				public void run() {
 					forge.burnUpdate();

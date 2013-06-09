@@ -66,7 +66,7 @@ class Forge implements Runnable {
 	}
 
 	static boolean isValid(Block block) {
-		return isValid(block, Config.getMaxStackVertical());
+		return isValid(block, DwarfForge.getInstance().getConfig().getInt("stack-limit-vertical"));
 	}
 
 	static boolean isValid(Block block, int stack) {
@@ -79,7 +79,7 @@ class Forge implements Runnable {
 		}
 
 		Block below = block.getRelative(BlockFace.DOWN);
-		if (Config.isAllowLavaExploit()) {
+		if (DwarfForge.getInstance().getConfig().getBoolean("allow-lava-exploit")) {
 			return Utils.isBlockOfType(below, Material.STATIONARY_LAVA, Material.LAVA) || isValid(below, stack - 1);
 		}
 		return Utils.isBlockOfType(below, Material.STATIONARY_LAVA) || isValid(below, stack - 1);
@@ -118,7 +118,7 @@ class Forge implements Runnable {
 			blockInv.clear(PRODUCT_SLOT);
 
 			Block dest = getOutputChest();
-			if (Config.isRequireFuel() && item.getType() == Material.COAL) {
+			if (DwarfForge.getInstance().getConfig().getBoolean("require-fuel") && item.getType() == Material.COAL) {
 				dest = getInputChest();
 			}
 
@@ -177,7 +177,7 @@ class Forge implements Runnable {
 							items.setAmount(items.getAmount() - 1);
 						}
 
-						((Furnace) getBlock().getState()).setCookTime(Config.cookTime());
+						((Furnace) getBlock().getState()).setCookTime((short) DwarfForge.getInstance().getConfig().getDouble("cooking-time"));
 
 						itemFound = true;
 						break;
@@ -237,7 +237,7 @@ class Forge implements Runnable {
 
 	void update() {
 		if (isValid()) {
-			if (Config.isRequireFuel()) {
+			if (DwarfForge.getInstance().getConfig().getBoolean("require-fuel")) {
 				if (!updateProduct() || !updateRawMaterial() || !updateFuel()) {
 					deactivate();
 					unloadFuel();
@@ -249,7 +249,7 @@ class Forge implements Runnable {
 			}
 		} else {
 			deactivate();
-			if (!Config.isRequireFuel()) {
+			if (!DwarfForge.getInstance().getConfig().getBoolean("require-fuel")) {
 				douse();
 			}
 		}
@@ -262,7 +262,7 @@ class Forge implements Runnable {
 	void smeltUpdate() {
 		update();
 		if (isActive()) {
-			((Furnace) getBlock().getState()).setCookTime(Config.cookTime());
+			((Furnace) getBlock().getState()).setCookTime((short) DwarfForge.getInstance().getConfig().getDouble("cooking-time"));
 		}
 	}
 
@@ -294,14 +294,14 @@ class Forge implements Runnable {
 
 	void toggle() {
 		if (isActive()) {
-			if (Config.isRequireFuel()) {
+			if (DwarfForge.getInstance().getConfig().getBoolean("require-fuel")) {
 				unloadFuel();
 			}
 			deactivate();
 			douse();
 		} else {
 			activate();
-			((Furnace) getBlock().getState()).setCookTime(Config.cookTime());
+			((Furnace) getBlock().getState()).setCookTime((short) DwarfForge.getInstance().getConfig().getDouble("cooking-time"));
 		}
 	}
 
@@ -311,7 +311,7 @@ class Forge implements Runnable {
 	}
 
 	private static Block getForgeChest(Block block, BlockFace dir) {
-		return getForgeChest(block, dir, Config.getMaxStackHorizontal());
+		return getForgeChest(block, dir, DwarfForge.getInstance().getConfig().getInt("stack-limit-horizontal"));
 	}
 
 	private static Block getForgeChest(Block block, BlockFace dir, int stack) {

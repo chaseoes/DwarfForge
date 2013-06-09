@@ -10,13 +10,10 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class DwarfForge extends JavaPlugin {
 	
-	private Config config;
-	private FileConfiguration configuration;
 	static DwarfForge instance;
 	
 	public static DwarfForge getInstance() {
@@ -33,8 +30,6 @@ public class DwarfForge extends JavaPlugin {
 		instance = this;
 		getServer().getPluginManager().registerEvents(new DFInventoryListener(), this);
 		getServer().getPluginManager().registerEvents(new DFBlockListener(), this);
-		config = Config.getInstance();
-		config.setupConfig(configuration, this);
 		restoreActiveForges(Forge.active);
 
 		try {

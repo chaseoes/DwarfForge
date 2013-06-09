@@ -52,8 +52,7 @@ class Utils {
 	}
 
 	static boolean canBurn(Material m) {
-		return isTypicalFuel(m)
-				|| (isCraftedFuel(m) && Config.isAllowCraftedFuel());
+		return isTypicalFuel(m) || (isCraftedFuel(m) && DwarfForge.getInstance().getConfig().getBoolean("allow-crafted-items"));
 	}
 
 	static BlockFace nextCardinalFace(BlockFace dir) {
