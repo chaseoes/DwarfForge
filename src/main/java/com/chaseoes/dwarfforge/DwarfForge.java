@@ -1,24 +1,3 @@
-/*
-    Copyright (C) 2011 by Matthew D Moss
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in
-    all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    THE SOFTWARE.
-*/
 package com.chaseoes.dwarfforge;
 
 import java.io.DataInputStream;
@@ -49,23 +28,14 @@ public class DwarfForge extends JavaPlugin {
 
 		void onDisable();
 	}
-
-	private Listener[] listeners = {
-			new DFBlockListener(),
-			new DFInventoryListener()
-	};
 	
-
 	public void onEnable() {
 		instance = this;
-
+		getServer().getPluginManager().registerEvents(new DFInventoryListener(), this);
+		getServer().getPluginManager().registerEvents(new DFBlockListener(), this);
 		config = Config.getInstance();
 		config.setupConfig(configuration, this);
-
 		restoreActiveForges(Forge.active);
-		for (Listener listener : listeners) {
-			listener.onEnable(this);
-		}
 
 		try {
 			MetricsLite metrics = new MetricsLite(this);
@@ -76,11 +46,7 @@ public class DwarfForge extends JavaPlugin {
 	}
 
 	public void onDisable() {
-		for (Listener listener : listeners) {
-			listener.onDisable();
-		}
 		saveActiveForges(Forge.active);
-
 		instance = null;
 	}
 
@@ -109,14 +75,12 @@ public class DwarfForge extends JavaPlugin {
 		File fout = new File(getDataFolder(), "active_forges");
 		try {
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(fout));
-			int count = 0;
 			for (Forge forge : activeForges.values()) {
 				Location loc = forge.getLocation();
 				out.writeUTF(loc.getWorld().getName());
 				out.writeDouble(loc.getX());
 				out.writeDouble(loc.getY());
 				out.writeDouble(loc.getZ());
-				count += 1;
 			}
 			out.close();
 		} catch (Exception e) {
@@ -135,7 +99,6 @@ public class DwarfForge extends JavaPlugin {
 		if (fin.exists()) {
 			try {
 				DataInputStream in = new DataInputStream(new FileInputStream(fin));
-				int count = 0;
 				while (true) {
 					try {
 						String name = in.readUTF();
@@ -144,7 +107,6 @@ public class DwarfForge extends JavaPlugin {
 						double z = in.readDouble();
 						Location loc = new Location(getServer().getWorld(name), x, y, z);
 						activeForges.put(loc, new Forge(loc));
-						count += 1;
 					} catch (EOFException e) {
 						break;
 					}
@@ -155,5 +117,5 @@ public class DwarfForge extends JavaPlugin {
 			}
 		}
 	}
+	
 }
-

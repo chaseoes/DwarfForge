@@ -1,27 +1,4 @@
-/*
-    Copyright (C) 2011 by Matthew D Moss
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in
-    all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    THE SOFTWARE.
-*/
-
 package com.chaseoes.dwarfforge;
-
 
 import net.minecraft.server.v1_5_R3.ItemStack;
 import net.minecraft.server.v1_5_R3.RecipesFurnace;
@@ -31,15 +8,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_5_R3.inventory.CraftItemStack;
 
-
 class Utils {
 
-	static final short SECS = 20;           // 20 server ticks
+	static final short SECS = 20;
 	static final short MINS = 60 * SECS;
-
-
-	// Logs are usually considered a typical fuel, but the Dwarfs were not
-	// stupid. Cook logs into charcoal, a much more efficient fuel.
 	static private boolean isTypicalFuel(Material m) {
 		switch (m) {
 			case COAL:
@@ -71,11 +43,8 @@ class Utils {
 	}
 
 	static Material resultOfCooking(Material mat) {
-		// ToDo checkhere, again some nms code
 		ItemStack item = RecipesFurnace.getInstance().getResult(mat.getId());
-		return (item != null)
-				? CraftItemStack.asCraftMirror(item).getType()
-				: null;
+		return (item != null) ? CraftItemStack.asCraftMirror(item).getType() : null;
 	}
 
 	static boolean canCook(Material m) {
@@ -117,4 +86,3 @@ class Utils {
 	}
 
 }
-

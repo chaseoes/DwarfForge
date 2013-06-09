@@ -1,27 +1,4 @@
-/*
-    Copyright (C) 2011 by Matthew D Moss
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in
-    all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    THE SOFTWARE.
-*/
-
 package com.chaseoes.dwarfforge;
-
 
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -32,22 +9,18 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-
 public class DoubleInventory implements Inventory {
 
-	// Methods inherited from Inventory
 	public int getSize() {
 		return major.getSize() + minor.getSize();
 	}
 
-	@Override
 	public int getMaxStackSize() {
-		return 0;  //To change body of implemented methods use File | Settings | File Templates.
+		return 0;
 	}
 
-	@Override
 	public void setMaxStackSize(int i) {
-		//To change body of implemented methods use File | Settings | File Templates.
+		
 	}
 
 	public String getName() {
@@ -75,7 +48,7 @@ public class DoubleInventory implements Inventory {
 	public HashMap<Integer, ItemStack> addItem(ItemStack... items) {
 		HashMap<Integer, ItemStack> leftover = major.addItem(items);
 		if (leftover != null && !leftover.isEmpty()) {
-			ItemStack[] rest = {}; // not null
+			ItemStack[] rest = {};
 			rest = leftover.values().toArray(rest);
 			leftover = minor.addItem(rest);
 		}
@@ -85,7 +58,7 @@ public class DoubleInventory implements Inventory {
 	public HashMap<Integer, ItemStack> removeItem(ItemStack... items) {
 		HashMap<Integer, ItemStack> leftover = major.addItem(items);
 		if (leftover != null && !leftover.isEmpty()) {
-			ItemStack[] rest = {}; // not null
+			ItemStack[] rest = {};
 			rest = leftover.values().toArray(rest);
 			leftover = minor.removeItem(rest);
 		}
@@ -219,7 +192,6 @@ public class DoubleInventory implements Inventory {
 		minor.clear();
 	}
 
-	@Override
 	public List<HumanEntity> getViewers() {
 		List<HumanEntity> tempViewers = new ArrayList<HumanEntity>();
 		tempViewers.addAll(major.getViewers());
@@ -227,33 +199,26 @@ public class DoubleInventory implements Inventory {
 		return tempViewers;
 	}
 
-	@Override
 	public String getTitle() {
 		return major.getTitle();
 	}
 
-	@Override
 	public InventoryType getType() {
 		return InventoryType.CHEST;
 	}
 
-	@Override
 	public InventoryHolder getHolder() {
 		return major.getHolder();
 	}
 
-	@Override
 	public ListIterator<ItemStack> iterator() {
 		return null;
 	}
 
-	@Override
 	public ListIterator<ItemStack> iterator(int i) {
-		return null;  //To change body of implemented methods use File | Settings | File Templates.
+		return null;
 	}
 
-
-	// DoubleInventory internals
 	private Inventory major;
 	private Inventory minor;
 
@@ -268,22 +233,15 @@ public class DoubleInventory implements Inventory {
 		return result;
 	}
 
-	private static <T> HashMap<Integer, ? extends T> combineWithOffset(HashMap<Integer, ? extends T> first,
-	                                                                   HashMap<Integer, ? extends T> second,
-	                                                                   int offset) {
+	private static <T> HashMap<Integer, ? extends T> combineWithOffset(HashMap<Integer, ? extends T> first, HashMap<Integer, ? extends T> second, int offset) {
 		HashMap<Integer, T> result = new HashMap<Integer, T>(first);
-
-		// Put in items from the second map, adjusting key values.
 		for (Integer key : second.keySet()) {
 			result.put(new Integer(key.intValue() + offset), (T) second.get(key));
 		}
-
 		return result;
 	}
 
-	@Override
 	public boolean containsAtLeast(ItemStack arg0, int arg1) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }
