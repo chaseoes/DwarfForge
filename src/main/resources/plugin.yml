@@ -1,22 +1,22 @@
 name: DwarfForge
 main: com.chaseoes.dwarfforge.DwarfForge
 version: '3.0'
-author: chaseoes
-website: http://chaseoes.com
+author: 'chaseoes'
+website: 'http://chaseoes.com'
+description: 'DwarfForge'
 permissions:
   dwarfforge.*:
-    description: Gives access to all DwarfForge commands.
-      children:
-        dwarfforge.create: true
-        dwarfforge.use: true
-        dwarfforge.destroy: true
-      dwarfforge.create:
-        description: Allows you to create a Dwarven forge.
-        default: true
-      dwarfforge.use:
-        description: Allows you to use a Dwarven forge.
-        default: true
-      dwarfforge.destroy:
-        description: Allows you to destroy a Dwarven forge.
-        default: true
-
+    description: 'Gives access to all DwarfForge commands.'
+    children:
+      dwarfforge.create: true
+      dwarfforge.use: true
+      dwarfforge.destroy: true
+    dwarfforge.create:
+      description: 'Allows you to create a Dwarven forge.'
+      default: true
+    dwarfforge.use:
+      description: 'Allows you to use a Dwarven forge.'
+      default: true
+    dwarfforge.destroy:
+      description: 'Allows you to destroy a Dwarven forge.'
+      default: true
