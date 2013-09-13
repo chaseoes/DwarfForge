@@ -3,8 +3,8 @@ package com.chaseoes.dwarfforge;
 import java.util.HashMap;
 
 
-import net.minecraft.server.v1_5_R3.BlockFurnace;
-import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
+import net.minecraft.server.v1_6_R2.BlockFurnace;
+import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
